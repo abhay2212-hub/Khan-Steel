@@ -1,0 +1,35 @@
+<?php
+// config.php.example - Khan Steel Backend Environment Settings
+// Copy this to config.php and update with your actual production credentials
+
+// Database Configuration
+define('DB_HOST', 'localhost');
+define('DB_NAME', 'khan_steel_db');
+define('DB_USER', 'db_user_secure');
+define('DB_PASS', 'YOUR_STRONG_DATABASE_PASSWORD_HERE');
+
+// Contact Parameters
+define('CONTACT_PHONE', '+91 89369 93790');
+define('ADMIN_EMAIL', 'admin@khansteel.in'); // Technical admin email (not for public display)
+
+// Site Configuration
+define('SITE_URL', 'https://khansteel.in');
+define('SITE_NAME', 'Khan Steel');
+
+// Environment Settings
+define('ENVIRONMENT', 'production'); // 'development' or 'production'
+
+// Error Reporting Logic
+if (ENVIRONMENT === 'development') {
+    error_reporting(E_ALL);
+    ini_set('display_errors', 1);
+} else {
+    error_reporting(0);
+    ini_set('display_errors', 0);
+    ini_set('log_errors', 1);
+    ini_set('error_log', __DIR__ . '/php_errors.log');
+}
+
+// Global Timezone (India)
+date_default_timezone_set('Asia/Kolkata');
+?>
