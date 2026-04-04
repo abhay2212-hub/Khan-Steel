@@ -1,0 +1,11 @@
+# robots.txt for Khan Steel
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /private/
+Disallow: /cgi-bin/
+Disallow: /tmp/
+Disallow: /logs/
+
+# Sitemap location
+Sitemap: https://khansteel.in/sitemap.xml
