@@ -10,12 +10,12 @@
   --industrial-gray: #1a1a1a;
   --industrial-steel: #ffffff;
   --industrial-orange: #ffffff;
-  --industrial-yellow: #ffffff;
-  --glass-bg: rgba(255, 255, 255, 0.05);
-  --glass-border: rgba(255, 255, 255, 0.1);
-  --glow-size: 250;
-  --border-size: 1.5;
-  --radius: 16;
+  --industrial-yellow: #facc15;
+  --glass-bg: rgba(255, 255, 255, 0.03);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glow-size: 150;
+  --border-size: 1;
+  --radius: 20;
 }
 
 img, video {
@@ -145,7 +145,7 @@ body {
 
 .section-title {
   font-family: 'Syne', sans-serif;
-  @apply text-5xl md:text-8xl font-extrabold uppercase tracking-tighter mb-8 leading-none;
+  @apply text-4xl md:text-8xl font-extrabold uppercase tracking-tighter mb-8 leading-none;
 }
 
 .btn-premium {
@@ -231,9 +231,20 @@ body {
 #whatsapp-fab, #call-fab {
   @apply hidden;
 }
+.glass-alt {
+    @apply bg-black/40 backdrop-blur-2xl border-white/5;
+}
+
+.safe-area-bottom {
+    padding-bottom: calc(12px + env(safe-area-inset-bottom));
+}
+
+#mobile-menu.active {
+    @apply translate-x-0;
+}
 
 .section-title {
-  @apply text-5xl md:text-7xl font-display font-bold uppercase tracking-tighter mb-8 leading-none;
+  @apply text-4xl md:text-7xl font-display font-bold uppercase tracking-tighter mb-8 leading-none;
 }
 
 .service-card {

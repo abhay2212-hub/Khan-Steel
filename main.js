@@ -384,4 +384,62 @@ const syncPointer = (e) => {
 document.addEventListener('pointermove', syncPointer);
 document.addEventListener('touchstart', (e) => syncPointer(e.touches[0]));
 
+// Interactive Map Initialization (Leaflet.js - Free & No-Key Required)
+window.initMap = function() {
+    const khanSteelLocation = [25.2976602, 82.9780176];
+    const mapElements = document.querySelectorAll('.gmap-container');
+    
+    mapElements.forEach(container => {
+        // Clear placeholder
+        container.innerHTML = '';
+        
+        const map = L.map(container, {
+            center: khanSteelLocation,
+            zoom: 16,
+            zoomControl: false,
+            dragging: !L.Browser.mobile,
+            touchZoom: L.Browser.mobile,
+            scrollWheelZoom: false
+        });
+
+        // Use a clean, dark-mode friendly tile set (CartoDB Dark Matter)
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; OpenStreetMap'
+        }).addTo(map);
+
+        // Custom Marker
+        const icon = L.divIcon({
+            className: 'custom-marker',
+            html: `
+                <div class="relative w-8 h-8">
+                    <div class="absolute inset-0 bg-white rounded-full animate-ping opacity-20"></div>
+                    <div class="absolute inset-1 bg-white rounded-full border-4 border-black"></div>
+                </div>
+            `,
+            iconSize: [32, 32],
+            iconAnchor: [16, 16]
+        });
+
+        const marker = L.marker(khanSteelLocation, { icon }).addTo(map);
+
+        marker.bindPopup(`
+            <div style="background: #000; color: #fff; padding: 12px; border-radius: 8px; font-family: 'Syne', sans-serif;">
+                <h3 style="margin: 0; font-size: 14px; font-weight: 800; letter-spacing: 1px;">KHAN STEEL</h3>
+                <p style="margin: 4px 0 0; font-size: 10px; color: #888; text-transform: uppercase;">Plant Location</p>
+            </div>
+        `, {
+            className: 'custom-popup',
+            closeButton: false
+        }).openPopup();
+
+        // Add zoom control manually to top-right
+        L.control.zoom({ position: 'topright' }).addTo(map);
+    });
+};
+
+// Check if Leaflet is already loaded, otherwise wait for it or trigger manually
+if (typeof L !== 'undefined') {
+    window.initMap();
+}
+
 console.log('Khan Steel Household Platform Initialized')

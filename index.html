@@ -59,6 +59,9 @@
     <link rel="stylesheet" href="style.css">
     <script type="module" src="./main.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <!-- Leaflet Map Assets -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     
     <!-- Structured Data / Schema.org -->
     <script type="application/ld+json">
@@ -166,20 +169,28 @@
         </div>
     </div>
 
-    <!-- Fluid Mobile Menu -->
-    <div class="fluid-menu-container" id="mobile-fluid-menu">
-        <!-- Trigger -->
-        <button class="fluid-menu-item fluid-menu-trigger">
-            <i class="fas fa-bars"></i>
-            <i class="fas fa-times hidden"></i>
-        </button>
-        <!-- Navigation Items -->
-        <a href="contact.html" class="fluid-menu-item" title="Contact"><i class="fas fa-envelope"></i></a>
-        <a href="services.html" class="fluid-menu-item" title="Services"><i class="fas fa-cog"></i></a>
-        <a href="about.html" class="fluid-menu-item" title="About"><i class="fas fa-info-circle"></i></a>
-        <a href="index.html" class="fluid-menu-item" title="Home"><i class="fas fa-home"></i></a>
-        <a href="https://wa.me/918936993790" target="_blank" class="fluid-menu-item bg-green-500 text-white" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
-    </div>
+    <!-- Mobile Bottom Navigation (Optimistic UI) -->
+    <nav class="fixed bottom-0 left-0 w-full z-50 md:hidden glass-alt border-t border-white/10 px-6 py-3 flex justify-between items-center safe-area-bottom">
+        <a href="index.html" class="flex flex-col items-center gap-1 text-white opacity-100 transition-all">
+            <i class="fas fa-home text-lg"></i>
+            <span class="text-[9px] font-bold uppercase tracking-widest">Home</span>
+        </a>
+        <a href="services.html" class="flex flex-col items-center gap-1 text-gray-500 hover:text-white transition-all">
+            <i class="fas fa-cog text-lg"></i>
+            <span class="text-[9px] font-bold uppercase tracking-widest">Services</span>
+        </a>
+        <a href="projects.html" class="flex flex-col items-center gap-1 text-gray-500 hover:text-white transition-all">
+            <i class="fas fa-project-diagram text-lg"></i>
+            <span class="text-[9px] font-bold uppercase tracking-widest">Projects</span>
+        </a>
+        <a href="contact.html" class="flex flex-col items-center gap-1 text-gray-500 hover:text-white transition-all">
+            <i class="fas fa-envelope text-lg"></i>
+            <span class="text-[9px] font-bold uppercase tracking-widest">Contact</span>
+        </a>
+        <a href="https://wa.me/918936993790" target="_blank" class="w-12 h-12 bg-[#25D366] text-white flex items-center justify-center rounded-2xl shadow-lg -mt-8 border-4 border-industrial-black">
+            <i class="fab fa-whatsapp text-2xl"></i>
+        </a>
+    </nav>
 
     <!-- Navbar -->
     <nav class="fixed top-0 left-0 w-full z-50 glass transition-all duration-300 py-2 px-6 md:px-12 flex justify-between items-center border-b border-white border-opacity-5" id="navbar" role="navigation" aria-label="Main navigation" itemscope itemtype="https://schema.org/SiteNavigationElement">
@@ -194,12 +205,15 @@
             <a href="contact.html" class="nav-link font-semibold uppercase text-xs tracking-widest">Contact</a>
         </div>
 
-        <div class="flex items-center gap-6">
-            <a href="contact.html" class="hidden md:block btn-primary px-6 py-2 text-xs uppercase font-black">GET A QUOTE</a>
-            <a href="tel:08936993790" class="hidden md:block text-sm font-bold text-white tracking-widest uppercase">
+        <div class="flex items-center gap-3 md:gap-6">
+            <a href="contact.html" class="btn-primary px-3 py-2 md:px-6 md:py-2 text-[10px] md:text-xs uppercase font-black">
+                <span class="hidden md:inline">GET A QUOTE</span>
+                <span class="md:hidden">QUOTE</span>
+            </a>
+            <a href="tel:08936993790" class="hidden lg:block text-sm font-bold text-white tracking-widest uppercase">
                 <i class="fas fa-phone mr-2"></i> 08936993790
             </a>
-            <button class="md:hidden text-2xl text-white" id="mobile-menu-btn">
+            <button class="text-2xl text-white ml-2" id="mobile-menu-btn" aria-label="Open Menu">
                 <i class="fas fa-bars"></i>
             </button>
         </div>
@@ -250,8 +264,8 @@
         </div>
 
         <div class="relative z-10 max-w-7xl mx-auto text-center" data-aos="fade-up" data-aos-duration="1000">
-            <h1 class="text-6xl md:text-9xl font-display font-bold uppercase leading-none tracking-tighter mb-12">
-                KHAN<br> <span class="opacity-50">STEELWORKS</span>
+            <h1 class="text-5xl md:text-9xl font-display font-bold uppercase leading-tight md:leading-none tracking-tighter mb-8 md:mb-12">
+                KHAN<br> <span class="opacity-50">STEEL</span>
             </h1>
             
             <!-- Typewriter Section -->
@@ -260,73 +274,9 @@
                 <span id="hero-typewriter" class="text-yellow-400 font-bold italic tracking-wider"></span>
             </div>
             
-            <!-- Trust Signals -->
-            <div class="mt-20 grid grid-cols-2 md:grid-cols-4 gap-8 border-t border-white border-opacity-10 pt-12">
-                <div class="p-8 border border-white/10 rounded-2xl bg-transparent" data-aos="fade-up" data-aos-delay="0">
-                    <h3 class="text-4xl font-display font-bold text-white">10+</h3>
-                    <p class="text-gray-500 uppercase text-[10px] tracking-widest mt-2">Years</p>
-                </div>
-                <div class="p-8 border border-white/10 rounded-2xl bg-transparent" data-aos="fade-up" data-aos-delay="100">
-                    <h3 class="text-4xl font-display font-bold text-white">500+</h3>
-                    <p class="text-gray-500 uppercase text-[10px] tracking-widest mt-2">Projects</p>
-                </div>
-                <div class="p-8 border border-white/10 rounded-2xl bg-transparent" data-aos="fade-up" data-aos-delay="200">
-                    <h3 class="text-4xl font-display font-bold text-white">1.5K+</h3>
-                    <p class="text-gray-500 uppercase text-[10px] tracking-widest mt-2">Home Projects</p>
-                </div>
-                <div class="p-8 border border-white/10 rounded-2xl bg-transparent" data-aos="fade-up" data-aos-delay="300">
-                    <h3 class="text-4xl font-display font-bold text-white">100%</h3>
-                    <p class="text-gray-500 uppercase text-[10px] tracking-widest mt-2">Custom Built</p>
-                </div>
-            </div>
         </div>
     </section>
 
-    <!-- Services Overview -->
-    <section id="services" class="py-24 px-6 md:px-12 bg-industrial-charcoal relative overflow-hidden">
-        <div class="max-w-7xl mx-auto relative z-10">
-            <div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
-                <div>
-                    <h2 class="section-title mb-0 uppercase tracking-tighter" data-aos="fade-right">HOUSEHOLD <br> <span class="text-white">FABRICATIONS</span></h2>
-                </div>
-                <p class="text-gray-400 max-w-sm" data-aos="fade-left">Specializing in high-integrity residential steelworks—where durability meets modern architectural elegance.</p>
-            </div>
-
-            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-                <!-- Service 1: Railings -->
-                <div class="spotlight-card group border border-white border-opacity-5 p-4 rounded-2xl relative" data-glow data-aos="fade-up">
-                    <img src="./as/7.jpg" alt="Steel Railings" class="w-full h-48 object-cover rounded-xl mb-6 transition-transform duration-700 group-hover:scale-105">
-                    <h3 class="text-xl font-bold mb-3 uppercase tracking-tighter">Steel Railings</h3>
-                    <p class="text-gray-500 text-xs leading-relaxed mb-6">Minimalist glass and black steel balustrades for modern balconies and decks.</p>
-                    <a href="services.html" class="text-white text-[10px] font-bold tracking-widest flex items-center gap-2 group-hover:translate-x-2 transition-transform">VIEW SPECS <i class="fas fa-arrow-right"></i></a>
-                </div>
-
-                <!-- Service 2: Steel Gates -->
-                <div class="spotlight-card group border border-white border-opacity-5 p-4 rounded-2xl relative" data-glow data-aos="fade-up" data-aos-delay="100">
-                    <img src="./as/6.webp" alt="Steel Gates" class="w-full h-48 object-cover rounded-xl mb-6 transition-transform duration-700 group-hover:scale-105">
-                    <h3 class="text-xl font-bold mb-3 uppercase tracking-tighter">Architectural Gates</h3>
-                    <p class="text-gray-500 text-xs leading-relaxed mb-6">Laser-cut precision gates featuring smart-lock integration and anti-rust coating.</p>
-                    <a href="services.html" class="text-white text-[10px] font-bold tracking-widest flex items-center gap-2 group-hover:translate-x-2 transition-transform">VIEW SPECS <i class="fas fa-arrow-right"></i></a>
-                </div>
-
-                <!-- Service 3: Windows -->
-                <div class="spotlight-card group border border-white border-opacity-5 p-4 rounded-2xl relative" data-glow data-aos="fade-up" data-aos-delay="200">
-                    <img src="./as/4.webp" alt="Steel Windows" class="w-full h-48 object-cover rounded-xl mb-6 transition-transform duration-700 group-hover:scale-105">
-                    <h3 class="text-xl font-bold mb-3 uppercase tracking-tighter">Modern Windows</h3>
-                    <p class="text-gray-500 text-xs leading-relaxed mb-6">Slim-profile black steel window frames designed for maximum light and clarity.</p>
-                    <a href="services.html" class="text-white text-[10px] font-bold tracking-widest flex items-center gap-2 group-hover:translate-x-2 transition-transform">VIEW SPECS <i class="fas fa-arrow-right"></i></a>
-                </div>
-
-                <!-- Service 4: Safety Equipment -->
-                <div class="spotlight-card group border border-white border-opacity-5 p-4 rounded-2xl relative" data-glow data-aos="fade-up" data-aos-delay="300">
-                    <img src="./as/5.webp" alt="Safety Grilles" class="w-full h-48 object-cover rounded-xl mb-6 transition-transform duration-700 group-hover:scale-105">
-                    <h3 class="text-xl font-bold mb-3 uppercase tracking-tighter">Safety Solutions</h3>
-                    <p class="text-gray-500 text-xs leading-relaxed mb-6">High-integrity steel grilles and security gates for ultimate residential protection.</p>
-                    <a href="services.html" class="text-white text-[10px] font-bold tracking-widest flex items-center gap-2 group-hover:translate-x-2 transition-transform">VIEW SPECS <i class="fas fa-arrow-right"></i></a>
-                </div>
-            </div>
-        </div>
-    </section>
 
     <!-- Why Choose Us -->
     <section class="py-24 px-6 md:px-12 bg-industrial-black overflow-hidden">
@@ -341,37 +291,8 @@
             </div>
             <div class="w-full md:w-1/2" data-aos="fade-left">
                 <h2 class="section-title text-4xl md:text-5xl border-l-4 border-white pl-8 mb-12 uppercase tracking-tighter">WHY PARTNER <br> WITH US?</h2>
-                
-                <div class="space-y-8">
-                    <div class="flex gap-6">
-                        <div class="w-12 h-12 flex-shrink-0 bg-white/5 rounded-lg flex items-center justify-center text-white">
-                            <i class="fas fa-award"></i>
-                        </div>
-                        <div>
-                            <h4 class="text-xl font-bold mb-2">Architectural Integrity</h4>
-                            <p class="text-gray-400">Our steelworks are designed by specialized engineers to meet the highest aesthetic and structural standards.</p>
-                        </div>
-                    </div>
-                    
-                    <div class="flex gap-6">
-                        <div class="w-12 h-12 flex-shrink-0 bg-white/5 rounded-lg flex items-center justify-center text-white">
-                            <i class="fas fa-fingerprint"></i>
-                        </div>
-                        <div>
-                            <h4 class="text-xl font-bold mb-2">100% Bespoke Design</h4>
-                            <p class="text-gray-400">No two homes are the same. Every gate, window, and railing is custom-built for your specific architecture.</p>
-                        </div>
-                    </div>
-
-                    <div class="flex gap-6">
-                        <div class="w-12 h-12 flex-shrink-0 bg-white/5 rounded-lg flex items-center justify-center text-white">
-                            <i class="fas fa-shield-alt"></i>
-                        </div>
-                        <div>
-                            <h4 class="text-xl font-bold mb-2">Long-Life Finish</h4>
-                            <p class="text-gray-400">Advanced anti-corrosion coatings ensure your steelworks remain pristine against the elements for decades.</p>
-                        </div>
-                    </div>
+                <div class="space-y-6 text-gray-400 leading-relaxed">
+                    <p>At Khan Steel, we leverage a decade of engineering excellence to transform architectural visions into structural reality. Every component is custom-crafted to meet the specific requirements of your project.</p>
                 </div>
             </div>
         </div>
@@ -449,16 +370,9 @@
                 <div class="flex flex-col items-center text-center">
                     <h5 class="font-bold text-white uppercase tracking-widest mb-4 text-xs">Plant Location</h5>
                     <div class="w-full aspect-square rounded-xl overflow-hidden border border-white border-opacity-10 transition-all duration-500 hover:border-white/30 max-w-[220px]">
-                        <iframe 
-                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3607.7561144!2d82.9754427!3d25.2976602!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x398e332cfe0e54cb%3A0x7affd3aea7a305ad!2sKhan%20Steel!5e0!3m2!1sen!2sin!4v1712240000000!5m2!1sen!2sin" 
-                            width="100%" 
-                            height="100%" 
-                            style="border:0;" 
-                            allowfullscreen="" 
-                            title="Khan Steel Plant Location"
-                            loading="lazy" 
-                            referrerpolicy="no-referrer-when-downgrade">
-                        </iframe>
+                        <div id="map" class="gmap-container w-full h-full bg-[#111] flex items-center justify-center">
+                            <span class="text-[9px] text-gray-500 uppercase tracking-widest">Connect API Key</span>
+                        </div>
                     </div>
                 </div>
 
@@ -488,7 +402,6 @@
         </div>
     </footer>
 
-    <!-- Scripts -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script type="module" src="./main.js"></script>
     <script>
