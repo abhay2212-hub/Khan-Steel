@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Khan Steel</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+  <script type="module" crossorigin src="/assets/admin-1dab3d83.js"></script>
+  <link rel="modulepreload" crossorigin href="/assets/style-7231b528.js">
+  <link rel="modulepreload" crossorigin href="/assets/projectsData-fdd276da.js">
+  <link rel="stylesheet" href="/assets/style-c0e82027.css">
+</head>
+<body class="overflow-x-hidden bg-industrial-black text-white min-h-screen font-sans">
+    <!-- Navbar -->
+    <nav class="w-full z-50 glass py-4 px-6 md:px-12 flex justify-between items-center border-b border-white border-opacity-5">
+        <a href="index.html" class="text-2xl md:text-3xl font-display font-bold tracking-tighter flex items-center gap-2 text-white">
+            Khan Steel <span class="bg-yellow-500 text-black text-[10px] px-2 py-1 rounded-full uppercase tracking-widest ml-2">Admin</span>
+        </a>
+        <button id="logout-btn" class="hidden text-xs font-bold uppercase tracking-widest text-red-400 hover:text-red-300">Logout <i class="fas fa-sign-out-alt ml-1"></i></button>
+    </nav>
+
+    <!-- Login Section -->
+    <div id="login-section" class="flex flex-col items-center justify-center pt-32 px-6">
+        <div class="card-dark w-full max-w-md p-8 rounded-2xl border border-white border-opacity-10 bg-industrial-charcoal/80 backdrop-blur-md shadow-2xl">
+            <h2 class="text-3xl font-display font-bold text-white mb-6 uppercase tracking-tighter text-center">Secure Login</h2>
+            <p class="text-xs text-gray-500 uppercase tracking-widest text-center mb-8">System Access</p>
+            
+            <form id="admin-login-form" class="space-y-6">
+                <div>
+                    <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-2">Username</label>
+                    <input type="text" id="username" class="input-dark w-full text-white px-4 py-3 bg-black/50 border border-white/10 rounded-lg focus:border-yellow-500 focus:outline-none transition-colors" placeholder="Enter username" required>
+                </div>
+                <div>
+                    <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-2">Password</label>
+                    <input type="password" id="password" class="input-dark w-full text-white px-4 py-3 bg-black/50 border border-white/10 rounded-lg focus:border-yellow-500 focus:outline-none transition-colors" placeholder="Enter password" required>
+                </div>
+                <div id="login-error" class="hidden text-red-500 text-xs font-bold uppercase tracking-widest text-center">Invalid credentials. Try again.</div>
+                <button type="submit" class="btn-premium group w-full py-4 text-sm mt-4 cursor-pointer relative overflow-hidden bg-white/5 border border-white/10 text-white rounded-lg hover:bg-white/10 transition-all block text-center min-h-[50px]">
+                    <span class="font-bold tracking-widest uppercase relative z-10 block w-full text-center">Access Dashboard</span>
+                </button>
+            </form>
+        </div>
+        <!-- Prototype hint -->
+        <p class="text-gray-600 mt-8 text-xs font-mono">Use: admin / khan123 for prototype access</p>
+    </div>
+
+    <!-- Admin Dashboard Section -->
+    <div id="dashboard-section" class="hidden pt-12 px-6 md:px-12 pb-24 max-w-7xl mx-auto">
+        <div class="flex justify-between items-end mb-12 border-b border-white border-opacity-10 pb-6">
+            <div>
+                <h1 class="text-4xl font-display font-bold uppercase tracking-tighter mb-2">Project Manager</h1>
+                <p class="text-gray-400 text-sm tracking-widest uppercase">Add or remove projects from the portfolio.</p>
+            </div>
+        </div>
+
+        <div class="grid lg:grid-cols-3 gap-12">
+            <!-- Form to Add Project -->
+            <div class="lg:col-span-1">
+                <div class="card-dark p-6 rounded-2xl border border-white border-opacity-10 bg-industrial-charcoal/50 sticky top-24">
+                    <h3 class="text-xl font-bold mb-6 uppercase tracking-widest border-b border-white/10 pb-4">Add Project</h3>
+                    <form id="add-project-form" class="space-y-4">
+                        <div>
+                            <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-2">Project Title</label>
+                            <input type="text" id="p-title" class="input-dark w-full text-white px-4 py-3 bg-black/50 border border-white/10 rounded-lg text-sm" placeholder="e.g. Spiral Staircase" required>
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-2">Meta (Location & Year)</label>
+                            <input type="text" id="p-meta" class="input-dark w-full text-white px-4 py-3 bg-black/50 border border-white/10 rounded-lg text-sm" placeholder="e.g. Sarnath • 2024" required>
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-2">Image URL</label>
+                            <input type="text" id="p-image" class="input-dark w-full text-white px-4 py-3 bg-black/50 border border-white/10 rounded-lg text-sm" placeholder="./as/new_project.webp" value="https://images.unsplash.com/photo-1549643276-fbc2d8ce1191?auto=format&fit=crop&q=80&w=800" required>
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-2">Description</label>
+                            <textarea id="p-desc" class="input-dark w-full text-white px-4 py-3 bg-black/50 border border-white/10 rounded-lg text-sm h-24 resize-none" placeholder="Project description..." required></textarea>
+                        </div>
+                        <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold tracking-widest uppercase text-xs py-3 rounded-lg transition-colors mt-4">
+                            + Add Project
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- List of Projects -->
+            <div class="lg:col-span-2">
+                <h3 class="text-xl font-bold mb-6 uppercase tracking-widest">Active Projects</h3>
+                <div id="admin-projects-list" class="space-y-4">
+                    <!-- Projects injected here via JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    
+</body>
+</html>
