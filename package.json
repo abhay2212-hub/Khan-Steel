@@ -1,6 +1,7 @@
 {
   "name": "khan-steel",
   "version": "1.0.0",
+  "type": "module",
   "description": "Modern steel fabrication website",
   "scripts": {
     "dev": "concurrently \"vite\" \"nodemon api/index.js\"",
