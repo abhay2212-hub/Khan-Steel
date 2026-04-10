@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import { MongoClient, ObjectId } from 'mongodb';
 import dotenv from 'dotenv';
+import serverless from 'serverless-http';
 dotenv.config();
 
 const app = express();
@@ -67,6 +68,8 @@ app.delete('/api/projects/:id', async (req, res) => {
   }
 });
 
+const handler = serverless(app);
+
 if (process.env.NODE_ENV !== 'production') {
   const PORT = process.env.PORT || 3001;
   app.listen(PORT, () => {
@@ -74,4 +77,4 @@ if (process.env.NODE_ENV !== 'production') {
   });
 }
 
-export default app;
+export default handler;
