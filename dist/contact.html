@@ -45,9 +45,9 @@
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
     <meta http-equiv="X-XSS-Protection" content="1; mode=block">
-  <script type="module" crossorigin src="/assets/style-7231b528.js"></script>
-  <script type="module" crossorigin src="/assets/main-be990507.js"></script>
-  <link rel="stylesheet" href="/assets/style-c0e82027.css">
+  <script type="module" crossorigin src="/assets/style-c3994442.js"></script>
+  <script type="module" crossorigin src="/assets/main-694aeeb6.js"></script>
+  <link rel="stylesheet" href="/assets/style-dddb2cd6.css">
 </head>
 <body class="overflow-x-hidden bg-industrial-black">
     <!-- Spiral Loader -->
@@ -64,7 +64,8 @@
             <i class="fas fa-bars"></i>
             <i class="fas fa-times hidden"></i>
         </button>
-        <a href="contact.html" class="fluid-menu-item"><i class="fas fa-envelope"></i></a>
+        <a href="contact.html" class="fluid-menu-item" title="Contact"><i class="fas fa-envelope"></i></a>
+
         <a href="services.html" class="fluid-menu-item"><i class="fas fa-cog"></i></a>
         <a href="about.html" class="fluid-menu-item"><i class="fas fa-info-circle"></i></a>
         <a href="index.html" class="fluid-menu-item"><i class="fas fa-home"></i></a>
@@ -72,14 +73,20 @@
     </div>
 
     <nav class="fixed top-0 left-0 w-full z-50 glass transition-all duration-300 py-2 px-6 md:px-12 flex justify-between items-center border-b border-white border-opacity-5" id="navbar">
-        <a href="index.html" class="text-2xl md:text-3xl font-display font-bold tracking-tighter flex items-center gap-2 text-white">
-            Khan Steel
-        </a>
+        <div class="flex items-center">
+            <button class="text-2xl text-white mr-4 md:hidden" id="mobile-menu-btn" aria-label="Open Menu">
+                <i class="fas fa-bars"></i>
+            </button>
+            <a href="index.html" class="text-2xl md:text-3xl font-display font-bold tracking-tighter flex items-center gap-2 text-white">
+                Khan Steel
+            </a>
+        </div>
         <div class="hidden md:flex gap-8">
             <a href="index.html" class="nav-link font-semibold uppercase text-xs tracking-widest">Home</a>
             <a href="about.html" class="nav-link font-semibold uppercase text-xs tracking-widest">About</a>
             <a href="projects.html" class="nav-link font-semibold uppercase text-xs tracking-widest">Projects</a>
             <a href="contact.html" class="nav-link text-white font-semibold uppercase text-xs tracking-widest after:w-full">Contact</a>
+
         </div>
         <div class="flex items-center gap-4">
              <a href="tel:08936993790" class="hidden md:block text-xs font-bold text-white tracking-[0.2em] uppercase opacity-60 hover:opacity-100 transition-opacity">
@@ -91,6 +98,31 @@
             </a>
         </div>
     </nav>
+    
+    <!-- Mobile Menu Overlay -->
+    <div id="mobile-menu" class="fixed inset-0 bg-industrial-black z-[100] transform -translate-x-full transition-transform duration-500 ease-in-out">
+        <div class="p-8 flex flex-col h-full">
+            <div class="flex justify-between items-center mb-16">
+                <a href="index.html" class="text-3xl font-display font-bold tracking-tighter flex items-center gap-2 text-white">
+                    Khan Steel
+                </a>
+                <button class="text-white text-3xl" id="close-menu">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="flex flex-col gap-8">
+                <a href="index.html" class="text-4xl font-display font-bold text-white hover:text-industrial-yellow transition-colors uppercase">HOME</a>
+                <a href="about.html" class="text-4xl font-display font-bold text-white hover:text-industrial-yellow transition-colors uppercase">ABOUT</a>
+                <a href="services.html" class="text-4xl font-display font-bold text-white hover:opacity-50 transition-colors uppercase">SERVICES</a>
+                <a href="projects.html" class="text-4xl font-display font-bold text-white hover:opacity-50 transition-colors uppercase">PROJECTS</a>
+                <a href="contact.html" class="text-4xl font-display font-bold text-white hover:opacity-50 transition-colors uppercase">CONTACT</a>
+            </div>
+            <div class="mt-auto border-t border-white border-opacity-10 pt-12">
+                <p class="text-gray-500 text-sm mb-4">Official Contact:</p>
+                <a href="tel:08936993790" class="text-2xl font-bold text-white block">08936993790</a>
+            </div>
+        </div>
+    </div>
 
     <!-- Contact Section -->
     <section class="relative py-32 px-6 md:px-12 bg-industrial-black border-b border-white border-opacity-5 overflow-hidden">
@@ -99,7 +131,7 @@
         
         <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-24 items-center relative z-10">
             <div data-aos="fade-right">
-                <h1 class="text-4xl md:text-7xl font-display font-bold uppercase tracking-tighter mb-8 italic">GET IN <br> <span class="opacity-50 text-white">TOUCH</span></h1>
+                <h1 class="text-4xl md:text-7xl font-display font-bold uppercase tracking-tighter mb-8 italic"><span class="glow-text">GET IN</span> <br> <span class="opacity-50 text-white">TOUCH</span></h1>
                 <p class="text-gray-400 text-lg mb-12 max-w-md leading-relaxed">Whether it's a bespoke entrance gate or an architectural staircase—our team is ready to engineer your residential vision.</p>
                 
                 <div class="space-y-8">

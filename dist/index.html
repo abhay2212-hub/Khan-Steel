@@ -156,9 +156,9 @@
     <meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
     <meta http-equiv="X-XSS-Protection" content="1; mode=block">
     <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
-  <script type="module" crossorigin src="/assets/style-7231b528.js"></script>
-  <script type="module" crossorigin src="/assets/main-be990507.js"></script>
-  <link rel="stylesheet" href="/assets/style-c0e82027.css">
+  <script type="module" crossorigin src="/assets/style-c3994442.js"></script>
+  <script type="module" crossorigin src="/assets/main-694aeeb6.js"></script>
+  <link rel="stylesheet" href="/assets/style-dddb2cd6.css">
 </head>
 <body class="overflow-x-hidden">
     <!-- Skip to main content (Accessibility & SEO) -->
@@ -190,6 +190,7 @@
             <i class="fas fa-envelope text-lg"></i>
             <span class="text-[9px] font-bold uppercase tracking-widest">Contact</span>
         </a>
+
         <a href="https://wa.me/918936993790" target="_blank" class="w-12 h-12 bg-[#25D366] text-white flex items-center justify-center rounded-2xl shadow-lg -mt-8 border-4 border-industrial-black">
             <i class="fab fa-whatsapp text-2xl"></i>
         </a>
@@ -197,15 +198,21 @@
 
     <!-- Navbar -->
     <nav class="fixed top-0 left-0 w-full z-50 glass transition-all duration-300 py-2 px-6 md:px-12 flex justify-between items-center border-b border-white border-opacity-5" id="navbar" role="navigation" aria-label="Main navigation" itemscope itemtype="https://schema.org/SiteNavigationElement">
-        <a href="index.html" class="text-2xl md:text-3xl font-display font-bold tracking-tighter flex items-center gap-2 text-white">
-            Khan Steel
-        </a>
+        <div class="flex items-center">
+            <button class="text-2xl text-white mr-4 md:hidden" id="mobile-menu-btn" aria-label="Open Menu">
+                <i class="fas fa-bars"></i>
+            </button>
+            <a href="index.html" class="text-2xl md:text-3xl font-display font-bold tracking-tighter flex items-center gap-2 text-white">
+                Khan Steel
+            </a>
+        </div>
         
         <div class="hidden md:flex gap-8">
             <a href="index.html" class="nav-link text-white font-semibold uppercase text-xs tracking-widest after:w-full">Home</a>
             <a href="about.html" class="nav-link font-semibold uppercase text-xs tracking-widest">About</a>
             <a href="projects.html" class="nav-link font-semibold uppercase text-xs tracking-widest">Projects</a>
             <a href="contact.html" class="nav-link font-semibold uppercase text-xs tracking-widest">Contact</a>
+
         </div>
 
         <div class="flex items-center gap-3 md:gap-6">
@@ -216,14 +223,12 @@
             <a href="tel:08936993790" class="hidden lg:block text-sm font-bold text-white tracking-widest uppercase">
                 <i class="fas fa-phone mr-2"></i> 08936993790
             </a>
-            <button class="text-2xl text-white ml-2" id="mobile-menu-btn" aria-label="Open Menu">
-                <i class="fas fa-bars"></i>
-            </button>
+
         </div>
     </nav>
 
     <!-- Mobile Menu Overlay -->
-    <div id="mobile-menu" class="fixed inset-0 bg-industrial-black z-[100] transform translate-x-full transition-transform duration-500 ease-in-out">
+    <div id="mobile-menu" class="fixed inset-0 bg-industrial-black z-[100] transform -translate-x-full transition-transform duration-500 ease-in-out">
         <div class="p-8 flex flex-col h-full">
             <div class="flex justify-between items-center mb-16">
                 <a href="#" class="text-3xl font-display font-bold tracking-tighter flex items-center gap-2 text-white">
@@ -268,7 +273,7 @@
 
         <div class="relative z-10 max-w-7xl mx-auto text-center" data-aos="fade-up" data-aos-duration="1000">
             <h1 class="text-5xl md:text-9xl font-display font-bold uppercase leading-tight md:leading-none tracking-tighter mb-8 md:mb-12">
-                KHAN<br> <span class="opacity-50">STEEL</span>
+                <span class="glow-text">KHAN</span><br> <span class="opacity-50">STEEL</span>
             </h1>
             
             <!-- Typewriter Section -->

@@ -6,10 +6,81 @@
     <title>Admin Dashboard | Khan Steel</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-  <script type="module" crossorigin src="/assets/admin-1dab3d83.js"></script>
-  <link rel="modulepreload" crossorigin href="/assets/style-7231b528.js">
-  <link rel="modulepreload" crossorigin href="/assets/projectsData-fdd276da.js">
-  <link rel="stylesheet" href="/assets/style-c0e82027.css">
+    <style>
+        /* ── Admin-specific styles ── */
+        .items-panel { display:none; animation: fadeSlide .3s ease; }
+        .items-panel.active { display:block; }
+        @keyframes fadeSlide { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+        .status-badge { font-size:9px; padding:3px 8px; border-radius:9999px; font-weight:700; text-transform:uppercase; letter-spacing:.1em; }
+        .status-pending    { background:rgba(234,179,8,.15); color:#eab308; border:1px solid rgba(234,179,8,.3); }
+        .status-in_progress{ background:rgba(59,130,246,.15); color:#3b82f6; border:1px solid rgba(59,130,246,.3); }
+        .status-completed  { background:rgba(34,197,94,.15);  color:#22c55e; border:1px solid rgba(34,197,94,.3); }
+        .item-row { transition: background .2s; }
+        .item-row:hover { background: rgba(255,255,255,.03); }
+        .manage-btn { background:rgba(234,179,8,.1); border:1px solid rgba(234,179,8,.25); color:#eab308; }
+        .manage-btn:hover { background:rgba(234,179,8,.25); }
+
+        /* ── Image Upload Zone ── */
+        .drop-zone {
+            border: 2px dashed rgba(255,255,255,.12);
+            border-radius: 12px;
+            padding: 24px 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all .3s ease;
+            background: rgba(0,0,0,.25);
+            position: relative;
+            overflow: hidden;
+        }
+        .drop-zone:hover, .drop-zone.drag-over {
+            border-color: #eab308;
+            background: rgba(234,179,8,.05);
+        }
+        .drop-zone.drag-over {
+            transform: scale(1.02);
+        }
+        .drop-zone.has-file {
+            border-color: #22c55e;
+            border-style: solid;
+            padding: 8px;
+        }
+        .drop-zone input[type=file] {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+        .drop-zone-preview {
+            width: 100%; height: 140px;
+            -o-object-fit: cover;
+               object-fit: cover;
+            border-radius: 8px;
+            display: none;
+        }
+        .drop-zone.has-file .drop-zone-preview { display: block; }
+        .drop-zone.has-file .drop-zone-prompt { display: none; }
+        .drop-zone-filename {
+            font-size: 10px;
+            color: #22c55e;
+            margin-top: 6px;
+            display: none;
+        }
+        .drop-zone.has-file .drop-zone-filename { display: block; }
+        .upload-spinner {
+            display: none;
+            width: 20px; height: 20px;
+            border: 2px solid rgba(234,179,8,.3);
+            border-top-color: #eab308;
+            border-radius: 50%;
+            animation: spin .6s linear infinite;
+            margin: 0 auto;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+  <script type="module" crossorigin src="/assets/admin-9ae994d9.js"></script>
+  <link rel="modulepreload" crossorigin href="/assets/style-c3994442.js">
+  <link rel="modulepreload" crossorigin href="/assets/projectsData-5e4ae3fb.js">
+  <link rel="stylesheet" href="/assets/style-dddb2cd6.css">
 </head>
 <body class="overflow-x-hidden bg-industrial-black text-white min-h-screen font-sans">
     <!-- Navbar -->
@@ -47,10 +118,18 @@
 
     <!-- Admin Dashboard Section -->
     <div id="dashboard-section" class="hidden pt-12 px-6 md:px-12 pb-24 max-w-7xl mx-auto">
+        <!-- Connection status badge -->
+        <div class="mb-4 flex items-center gap-2">
+            <span id="db-status" class="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full border">
+                <span class="w-2 h-2 rounded-full bg-gray-500 animate-pulse" id="db-dot"></span>
+                <span id="db-label">Checking Supabase…</span>
+            </span>
+        </div>
+
         <div class="flex justify-between items-end mb-12 border-b border-white border-opacity-10 pb-6">
             <div>
                 <h1 class="text-4xl font-display font-bold uppercase tracking-tighter mb-2">Project Manager</h1>
-                <p class="text-gray-400 text-sm tracking-widest uppercase">Add or remove projects from the portfolio.</p>
+                <p class="text-gray-400 text-sm tracking-widest uppercase">Add, remove & manage project items.</p>
             </div>
         </div>
 
@@ -69,8 +148,17 @@
                             <input type="text" id="p-meta" class="input-dark w-full text-white px-4 py-3 bg-black/50 border border-white/10 rounded-lg text-sm" placeholder="e.g. Sarnath • 2024" required>
                         </div>
                         <div>
-                            <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-2">Image URL</label>
-                            <input type="text" id="p-image" class="input-dark w-full text-white px-4 py-3 bg-black/50 border border-white/10 rounded-lg text-sm" placeholder="./as/new_project.webp" value="https://images.unsplash.com/photo-1549643276-fbc2d8ce1191?auto=format&fit=crop&q=80&w=800" required>
+                            <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-2">Project Image</label>
+                            <div class="drop-zone" id="project-drop-zone">
+                                <input type="file" id="p-image-file" accept="image/*">
+                                <div class="drop-zone-prompt">
+                                    <i class="fas fa-cloud-upload-alt text-2xl text-gray-500 mb-2"></i>
+                                    <p class="text-xs text-gray-400 font-bold uppercase tracking-widest">Drop image here</p>
+                                    <p class="text-[10px] text-gray-600 mt-1">or click to browse • JPG, PNG, WEBP</p>
+                                </div>
+                                <img class="drop-zone-preview" id="p-image-preview" alt="Preview">
+                                <p class="drop-zone-filename" id="p-image-filename"></p>
+                            </div>
                         </div>
                         <div>
                             <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-2">Description</label>
@@ -88,6 +176,85 @@
                 <h3 class="text-xl font-bold mb-6 uppercase tracking-widest">Active Projects</h3>
                 <div id="admin-projects-list" class="space-y-4">
                     <!-- Projects injected here via JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════ -->
+        <!-- Project Items Panel (shown when a project is selected) -->
+        <!-- ═══════════════════════════════════════════ -->
+        <div id="items-panel" class="items-panel mt-16">
+            <div class="flex items-center justify-between border-b border-white/10 pb-4 mb-8">
+                <div>
+                    <button id="items-back-btn" class="text-xs text-gray-400 hover:text-white transition-colors uppercase tracking-widest mb-2">
+                        <i class="fas fa-arrow-left mr-2"></i> Back to Projects
+                    </button>
+                    <h2 class="text-3xl font-display font-bold uppercase tracking-tighter">
+                        Items for: <span id="items-project-title" class="text-yellow-500"></span>
+                    </h2>
+                </div>
+                <span id="items-count" class="text-xs text-gray-500 uppercase tracking-widest"></span>
+            </div>
+
+            <div class="grid lg:grid-cols-3 gap-12">
+                <!-- Add Item Form -->
+                <div class="lg:col-span-1">
+                    <div class="card-dark p-6 rounded-2xl border border-white/10 bg-industrial-charcoal/50 sticky top-24">
+                        <h3 class="text-lg font-bold mb-6 uppercase tracking-widest border-b border-white/10 pb-4">Add Item</h3>
+                        <form id="add-item-form" class="space-y-4">
+                            <div>
+                                <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-2">Item Name</label>
+                                <input type="text" id="item-name" class="input-dark w-full text-white px-4 py-3 bg-black/50 border border-white/10 rounded-lg text-sm" placeholder="e.g. MS Gate Panel" required>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-2">Description</label>
+                                <input type="text" id="item-desc" class="input-dark w-full text-white px-4 py-3 bg-black/50 border border-white/10 rounded-lg text-sm" placeholder="Optional details">
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-2">Quantity</label>
+                                    <input type="number" id="item-qty" min="1" value="1" class="input-dark w-full text-white px-4 py-3 bg-black/50 border border-white/10 rounded-lg text-sm">
+                                </div>
+                                <div>
+                                    <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-2">Unit</label>
+                                    <select id="item-unit" class="input-dark w-full text-white px-4 py-3 bg-black/50 border border-white/10 rounded-lg text-sm">
+                                        <option value="pcs">pcs</option>
+                                        <option value="kg">kg</option>
+                                        <option value="meters">meters</option>
+                                        <option value="sqft">sqft</option>
+                                        <option value="set">set</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-2">Rate (₹ per unit)</label>
+                                <input type="number" id="item-rate" min="0" step="0.01" value="0" class="input-dark w-full text-white px-4 py-3 bg-black/50 border border-white/10 rounded-lg text-sm">
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-2">Status</label>
+                                <select id="item-status" class="input-dark w-full text-white px-4 py-3 bg-black/50 border border-white/10 rounded-lg text-sm">
+                                    <option value="pending">Pending</option>
+                                    <option value="in_progress">In Progress</option>
+                                    <option value="completed">Completed</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="w-full bg-yellow-600 hover:bg-yellow-700 text-black font-bold tracking-widest uppercase text-xs py-3 rounded-lg transition-colors mt-4">
+                                <i class="fas fa-plus mr-2"></i> Add Item
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Items List -->
+                <div class="lg:col-span-2">
+                    <div id="items-list" class="space-y-3">
+                        <!-- Items injected here -->
+                    </div>
+                    <!-- Totals Row -->
+                    <div id="items-total" class="mt-6 p-4 rounded-xl border border-yellow-500/20 bg-yellow-500/5 flex justify-between items-center">
+                        <span class="text-xs font-bold uppercase tracking-widest text-gray-400">Total Amount</span>
+                        <span id="items-total-amount" class="text-2xl font-bold text-yellow-500">₹0</span>
+                    </div>
                 </div>
             </div>
         </div>

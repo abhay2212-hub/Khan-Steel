@@ -46,7 +46,7 @@ img:hover, video:hover {
   background-position: 50% 50%;
   background-attachment: fixed;
   border: calc(var(--border-size, 1.5) * 1px) solid var(--glass-border);
-  touch-action: none;
+  touch-action: pan-y;
 }
 
 [data-glow]::before,
@@ -122,7 +122,7 @@ body {
 }
 
 .btn-primary {
-  @apply bg-white text-black font-bold py-4 px-10 rounded-sm hover:bg-gray-200 transition-all duration-300 uppercase tracking-widest text-sm inline-block;
+  @apply bg-white text-black font-bold py-4 px-10 rounded-2xl hover:bg-gray-200 transition-all duration-300 uppercase tracking-widest text-sm inline-block;
 }
 
 .animate-glow {
@@ -159,15 +159,15 @@ body {
 }
 
 .btn-premium {
-  @apply relative inline-block p-px font-bold leading-6 text-white bg-white/10 shadow-2xl cursor-pointer rounded-xl transition-all duration-300 ease-in-out hover:scale-105 active:scale-95 overflow-hidden;
+  @apply relative inline-block p-px font-bold leading-6 text-white bg-white/10 shadow-2xl cursor-pointer rounded-2xl transition-all duration-300 ease-in-out hover:scale-105 active:scale-95 overflow-hidden;
 }
 
 .btn-premium .shimmer {
-  @apply absolute inset-0 rounded-xl bg-gradient-to-r from-transparent via-white/40 to-transparent p-[2px] opacity-0 transition-opacity duration-500 group-hover:opacity-100;
+  @apply absolute inset-0 rounded-2xl bg-gradient-to-r from-transparent via-white/40 to-transparent p-[2px] opacity-0 transition-opacity duration-500 group-hover:opacity-100;
 }
 
 .btn-premium .content {
-  @apply relative z-10 block px-10 py-4 rounded-xl bg-black flex items-center justify-center gap-3 uppercase tracking-widest text-[10px] font-bold;
+  @apply relative z-10 block px-10 py-4 rounded-2xl bg-black flex items-center justify-center gap-3 uppercase tracking-widest text-[10px] font-bold;
 }
 
 .input-dark {
@@ -199,43 +199,28 @@ body {
   @apply bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400;
 }
 
-/* Fluid Mobile Menu */
+/* Premium Sticky Bottom Bar */
 .fluid-menu-container {
-  @apply fixed bottom-8 right-8 z-[100] md:hidden;
+    @apply fixed bottom-0 left-0 w-full z-[100] md:hidden px-4 pb-6 pt-4 flex justify-around items-center;
+    background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.85) 50%, transparent 100%);
+    backdrop-filter: blur(10px);
 }
 
 .fluid-menu-item {
-  @apply w-14 h-14 bg-white text-black flex items-center justify-center rounded-full shadow-2xl transition-all duration-500 absolute bottom-0 right-0;
-  will-change: transform, opacity;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    @apply flex flex-col items-center gap-1 text-[10px] font-bold tracking-widest text-[#888] transition-all duration-300;
 }
 
-.fluid-menu-container[data-expanded="true"] .fluid-menu-item:nth-child(2) { transform: translateY(-70px); opacity: 1; }
-.fluid-menu-container[data-expanded="true"] .fluid-menu-item:nth-child(3) { transform: translateY(-130px); opacity: 1; }
-.fluid-menu-container[data-expanded="true"] .fluid-menu-item:nth-child(4) { transform: translateY(-190px); opacity: 1; }
-.fluid-menu-container[data-expanded="true"] .fluid-menu-item:nth-child(5) { transform: translateY(-250px); opacity: 1; }
-.fluid-menu-container[data-expanded="true"] .fluid-menu-item:nth-child(6) { transform: translateY(-310px); opacity: 1; }
-
-.fluid-menu-item:not(.fluid-menu-trigger) {
-  opacity: 0;
-  pointer-events: none;
+.fluid-menu-item i {
+    @apply text-xl mb-1;
 }
 
-.fluid-menu-item:hover {
-  @apply scale-110 bg-gray-100;
+.fluid-menu-item:hover, .fluid-menu-item.active {
+    @apply text-white;
 }
 
-.fluid-menu-container[data-expanded="true"] .fluid-menu-item:not(.fluid-menu-trigger) {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.fluid-menu-trigger {
-  @apply bg-black text-white z-[101] rotate-0 transition-transform duration-500;
-}
-
-.fluid-menu-container[data-expanded="true"] .fluid-menu-trigger {
-  @apply rotate-[360deg];
+.fluid-menu-item.whatsapp-btn {
+    @apply w-12 h-12 bg-[#25D366] text-white rounded-2xl flex items-center justify-center text-2xl shadow-lg;
+    box-shadow: 0 0 20px rgba(37, 211, 102, 0.4);
 }
 
 #whatsapp-fab, #call-fab {
