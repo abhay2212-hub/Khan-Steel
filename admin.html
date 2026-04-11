@@ -19,6 +19,62 @@
         .item-row:hover { background: rgba(255,255,255,.03); }
         .manage-btn { background:rgba(234,179,8,.1); border:1px solid rgba(234,179,8,.25); color:#eab308; }
         .manage-btn:hover { background:rgba(234,179,8,.25); }
+
+        /* ── Image Upload Zone ── */
+        .drop-zone {
+            border: 2px dashed rgba(255,255,255,.12);
+            border-radius: 12px;
+            padding: 24px 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all .3s ease;
+            background: rgba(0,0,0,.25);
+            position: relative;
+            overflow: hidden;
+        }
+        .drop-zone:hover, .drop-zone.drag-over {
+            border-color: #eab308;
+            background: rgba(234,179,8,.05);
+        }
+        .drop-zone.drag-over {
+            transform: scale(1.02);
+        }
+        .drop-zone.has-file {
+            border-color: #22c55e;
+            border-style: solid;
+            padding: 8px;
+        }
+        .drop-zone input[type=file] {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+        .drop-zone-preview {
+            width: 100%; height: 140px;
+            object-fit: cover;
+            border-radius: 8px;
+            display: none;
+        }
+        .drop-zone.has-file .drop-zone-preview { display: block; }
+        .drop-zone.has-file .drop-zone-prompt { display: none; }
+        .drop-zone-filename {
+            font-size: 10px;
+            color: #22c55e;
+            margin-top: 6px;
+            display: none;
+        }
+        .drop-zone.has-file .drop-zone-filename { display: block; }
+        .upload-spinner {
+            display: none;
+            width: 20px; height: 20px;
+            border: 2px solid rgba(234,179,8,.3);
+            border-top-color: #eab308;
+            border-radius: 50%;
+            animation: spin .6s linear infinite;
+            margin: 0 auto;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body class="overflow-x-hidden bg-industrial-black text-white min-h-screen font-sans">
@@ -87,8 +143,17 @@
                             <input type="text" id="p-meta" class="input-dark w-full text-white px-4 py-3 bg-black/50 border border-white/10 rounded-lg text-sm" placeholder="e.g. Sarnath • 2024" required>
                         </div>
                         <div>
-                            <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-2">Image URL</label>
-                            <input type="text" id="p-image" class="input-dark w-full text-white px-4 py-3 bg-black/50 border border-white/10 rounded-lg text-sm" placeholder="./as/new_project.webp" value="https://images.unsplash.com/photo-1549643276-fbc2d8ce1191?auto=format&fit=crop&q=80&w=800" required>
+                            <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-2">Project Image</label>
+                            <div class="drop-zone" id="project-drop-zone">
+                                <input type="file" id="p-image-file" accept="image/*">
+                                <div class="drop-zone-prompt">
+                                    <i class="fas fa-cloud-upload-alt text-2xl text-gray-500 mb-2"></i>
+                                    <p class="text-xs text-gray-400 font-bold uppercase tracking-widest">Drop image here</p>
+                                    <p class="text-[10px] text-gray-600 mt-1">or click to browse • JPG, PNG, WEBP</p>
+                                </div>
+                                <img class="drop-zone-preview" id="p-image-preview" alt="Preview">
+                                <p class="drop-zone-filename" id="p-image-filename"></p>
+                            </div>
                         </div>
                         <div>
                             <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-2">Description</label>
@@ -311,20 +376,109 @@
             });
         }
 
+        // ── Image Upload Helpers ─────────────────────────
+        let selectedImageFile = null;
+
+        // Drop zone interactions
+        const dropZone = document.getElementById('project-drop-zone');
+        const fileInput = document.getElementById('p-image-file');
+        const preview = document.getElementById('p-image-preview');
+        const filenameEl = document.getElementById('p-image-filename');
+
+        dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+        dropZone.addEventListener('dragleave', () => { dropZone.classList.remove('drag-over'); });
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('drag-over');
+            if (e.dataTransfer.files.length) handleFileSelect(e.dataTransfer.files[0]);
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length) handleFileSelect(e.target.files[0]);
+        });
+
+        function handleFileSelect(file) {
+            if (!file.type.startsWith('image/')) return alert('Please select an image file.');
+            selectedImageFile = file;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                preview.src = e.target.result;
+                dropZone.classList.add('has-file');
+                filenameEl.textContent = file.name + ' (' + (file.size / 1024).toFixed(0) + ' KB)';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function resetImageUpload() {
+            selectedImageFile = null;
+            preview.src = '';
+            dropZone.classList.remove('has-file');
+            filenameEl.textContent = '';
+            fileInput.value = '';
+        }
+
+        async function uploadImage(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = async (e) => {
+                    try {
+                        const base64 = e.target.result.split(',')[1]; // strip data:image/...;base64,
+                        const res = await fetch('/api/upload', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                base64,
+                                filename: file.name,
+                                contentType: file.type
+                            })
+                        });
+                        
+                        if (!res.ok) {
+                            const errorData = await res.json().catch(() => ({ error: res.statusText }));
+                            throw new Error(errorData.error || `Upload failed (${res.status})`);
+                        }
+                        
+                        const data = await res.json();
+                        resolve(data.url);
+                    } catch (err) { reject(err); }
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
         // Add Project
+        const submitBtn = addProjectForm.querySelector('button[type=submit]');
         addProjectForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const newProject = {
-                title: document.getElementById('p-title').value,
-                meta: document.getElementById('p-meta').value,
-                image: document.getElementById('p-image').value,
-                description: document.getElementById('p-desc').value,
-                delay: 0
-            };
-            await addProject(newProject);
-            await renderAdminProjects();
-            addProjectForm.reset();
-            document.getElementById('p-image').value = "https://images.unsplash.com/photo-1549643276-fbc2d8ce1191?auto=format&fit=crop&q=80&w=800";
+            if (!selectedImageFile) return alert('Please select a project image.');
+
+            // Show loading state
+            const originalText = submitBtn.textContent;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="upload-spinner" style="display:inline-block"></span> Uploading…';
+
+            try {
+                // Upload image first
+                const imageUrl = await uploadImage(selectedImageFile);
+
+                const newProject = {
+                    title: document.getElementById('p-title').value,
+                    meta: document.getElementById('p-meta').value,
+                    image: imageUrl,
+                    description: document.getElementById('p-desc').value,
+                    delay: 0
+                };
+                await addProject(newProject);
+                await renderAdminProjects();
+                addProjectForm.reset();
+                resetImageUpload();
+            } catch (err) {
+                alert('Failed to upload image. Please try again.');
+                console.error(err);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = '+ Add Project';
+            }
         });
 
         // ── Items Panel ──────────────────────────────────
