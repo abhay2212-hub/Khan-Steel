@@ -397,40 +397,52 @@ window.initMap = function() {
             center: khanSteelLocation,
             zoom: 16,
             zoomControl: false,
+            attributionControl: false,
             dragging: !L.Browser.mobile,
             touchZoom: L.Browser.mobile,
             scrollWheelZoom: false
         });
 
-        // Use a clean, dark-mode friendly tile set (CartoDB Dark Matter)
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-            attribution: '&copy; OpenStreetMap'
+        // Use Satellite imagery (ESRI World Imagery)
+        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EBP, and the GIS User Community'
         }).addTo(map);
 
-        // Custom Marker
+        // Custom Marker (Khan Steel)
         const icon = L.divIcon({
             className: 'custom-marker',
             html: `
-                <div class="relative w-8 h-8">
-                    <div class="absolute inset-0 bg-white rounded-full animate-ping opacity-20"></div>
-                    <div class="absolute inset-1 bg-white rounded-full border-4 border-black"></div>
+                <div class="relative flex items-center justify-center">
+                    <i class="fas fa-map-marker-alt text-white text-4xl shadow-2xl"></i>
+                    <div class="absolute -bottom-1 w-2 h-2 bg-white rounded-full animate-ping opacity-30"></div>
                 </div>
             `,
-            iconSize: [32, 32],
-            iconAnchor: [16, 16]
+            iconSize: [40, 40],
+            iconAnchor: [20, 35]
         });
 
         const marker = L.marker(khanSteelLocation, { icon }).addTo(map);
 
-        marker.bindPopup(`
-            <div style="background: #000; color: #fff; padding: 12px; border-radius: 8px; font-family: 'Syne', sans-serif;">
-                <h3 style="margin: 0; font-size: 14px; font-weight: 800; letter-spacing: 1px;">KHAN STEEL</h3>
-                <p style="margin: 4px 0 0; font-size: 10px; color: #888; text-transform: uppercase;">Plant Location</p>
-            </div>
-        `, {
-            className: 'custom-popup',
-            closeButton: false
-        }).openPopup();
+        marker.addTo(map);
+
+        // User Location Pin
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition((position) => {
+                const userCoords = [position.coords.latitude, position.coords.longitude];
+                const userIcon = L.divIcon({
+                    className: 'user-marker',
+                    html: `
+                        <div class="relative flex items-center justify-center">
+                            <i class="fas fa-map-marker-alt text-yellow-400 text-3xl shadow-2xl"></i>
+                            <div class="absolute -bottom-1 w-2 h-2 bg-yellow-400 rounded-full animate-ping opacity-50"></div>
+                        </div>
+                    `,
+                    iconSize: [32, 32],
+                    iconAnchor: [16, 28]
+                });
+                L.marker(userCoords, { icon: userIcon }).addTo(map);
+            });
+        }
 
         // Add zoom control manually to top-right
         L.control.zoom({ position: 'topright' }).addTo(map);
@@ -442,4 +454,31 @@ if (typeof L !== 'undefined') {
     window.initMap();
 }
 
-console.log('Khan Steel Household Platform Initialized')
+console.log('Khan Steel Household Platform Initialized');
+
+// Mobile Menu Global Logic
+document.addEventListener('DOMContentLoaded', () => {
+    const menuBtn = document.getElementById('mobile-menu-btn');
+    const closeBtn = document.getElementById('close-menu');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    if (menuBtn && closeBtn && mobileMenu) {
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+
+        closeBtn.addEventListener('click', () => {
+            mobileMenu.classList.remove('active');
+            document.body.style.overflow = '';
+        });
+
+        // Close menu on link click
+        document.querySelectorAll('#mobile-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.remove('active');
+                document.body.style.overflow = '';
+            });
+        });
+    }
+});

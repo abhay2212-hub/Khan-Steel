@@ -12,9 +12,9 @@ export default {
     extend: {
       colors: {
         industrial: {
-          black: '#0f0f0f',
-          charcoal: '#121212',
-          gray: '#1a1a1a',
+          black: 'rgba(15, 15, 15, 0.4)',
+          charcoal: 'rgba(18, 18, 18, 0.4)',
+          gray: 'rgba(26, 26, 26, 0.5)',
           steel: '#8e8e8e',
           orange: '#ffffff',
           yellow: '#ffffff',

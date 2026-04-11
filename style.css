@@ -5,14 +5,14 @@
 @tailwind utilities;
 
 :root {
-  --industrial-black: #050505;
-  --industrial-charcoal: #0a0a0a;
-  --industrial-gray: #1a1a1a;
+  --industrial-black: rgba(5, 5, 5, 0.4);
+  --industrial-charcoal: rgba(10, 10, 10, 0.4);
+  --industrial-gray: rgba(26, 26, 26, 0.5);
   --industrial-steel: #ffffff;
   --industrial-orange: #ffffff;
   --industrial-yellow: #facc15;
-  --glass-bg: rgba(255, 255, 255, 0.03);
-  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-bg: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.1);
   --glow-size: 150;
   --border-size: 1;
   --radius: 20;
@@ -146,6 +146,16 @@ body {
 .section-title {
   font-family: 'Syne', sans-serif;
   @apply text-4xl md:text-8xl font-extrabold uppercase tracking-tighter mb-8 leading-none;
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+}
+
+/* Specific Glow for Hero/Story fonts */
+.glow-text {
+    text-shadow: 0 0 30px rgba(255, 255, 255, 0.6), 0 0 60px rgba(255, 255, 255, 0.2);
+}
+
+.glow-text-yellow {
+    text-shadow: 0 0 20px rgba(250, 204, 21, 0.8);
 }
 
 .btn-premium {
@@ -275,4 +285,25 @@ body {
     left: 50%;
     transform: translate(-50%, -50%);
     pointer-events: none;
+}
+/* Mobile Specific Tweaks */
+@media (max-width: 768px) {
+    .section-title {
+        @apply text-5xl;
+        letter-spacing: -2px;
+    }
+    
+    section {
+        @apply py-16 px-4;
+    }
+
+    .aspect-video {
+        aspect-ratio: 4/3;
+    }
+}
+
+/* Ensure body has a slight dynamic feel for transparency */
+body {
+    background: radial-gradient(circle at 50% 50%, #111 0%, #000 100%);
+    background-attachment: fixed;
 }
