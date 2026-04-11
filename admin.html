@@ -6,6 +6,20 @@
     <title>Admin Dashboard | Khan Steel</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* ── Admin-specific styles ── */
+        .items-panel { display:none; animation: fadeSlide .3s ease; }
+        .items-panel.active { display:block; }
+        @keyframes fadeSlide { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+        .status-badge { font-size:9px; padding:3px 8px; border-radius:9999px; font-weight:700; text-transform:uppercase; letter-spacing:.1em; }
+        .status-pending    { background:rgba(234,179,8,.15); color:#eab308; border:1px solid rgba(234,179,8,.3); }
+        .status-in_progress{ background:rgba(59,130,246,.15); color:#3b82f6; border:1px solid rgba(59,130,246,.3); }
+        .status-completed  { background:rgba(34,197,94,.15);  color:#22c55e; border:1px solid rgba(34,197,94,.3); }
+        .item-row { transition: background .2s; }
+        .item-row:hover { background: rgba(255,255,255,.03); }
+        .manage-btn { background:rgba(234,179,8,.1); border:1px solid rgba(234,179,8,.25); color:#eab308; }
+        .manage-btn:hover { background:rgba(234,179,8,.25); }
+    </style>
 </head>
 <body class="overflow-x-hidden bg-industrial-black text-white min-h-screen font-sans">
     <!-- Navbar -->
@@ -43,10 +57,18 @@
 
     <!-- Admin Dashboard Section -->
     <div id="dashboard-section" class="hidden pt-12 px-6 md:px-12 pb-24 max-w-7xl mx-auto">
+        <!-- Connection status badge -->
+        <div class="mb-4 flex items-center gap-2">
+            <span id="db-status" class="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full border">
+                <span class="w-2 h-2 rounded-full bg-gray-500 animate-pulse" id="db-dot"></span>
+                <span id="db-label">Checking Supabase…</span>
+            </span>
+        </div>
+
         <div class="flex justify-between items-end mb-12 border-b border-white border-opacity-10 pb-6">
             <div>
                 <h1 class="text-4xl font-display font-bold uppercase tracking-tighter mb-2">Project Manager</h1>
-                <p class="text-gray-400 text-sm tracking-widest uppercase">Add or remove projects from the portfolio.</p>
+                <p class="text-gray-400 text-sm tracking-widest uppercase">Add, remove & manage project items.</p>
             </div>
         </div>
 
@@ -87,20 +109,98 @@
                 </div>
             </div>
         </div>
+
+        <!-- ═══════════════════════════════════════════ -->
+        <!-- Project Items Panel (shown when a project is selected) -->
+        <!-- ═══════════════════════════════════════════ -->
+        <div id="items-panel" class="items-panel mt-16">
+            <div class="flex items-center justify-between border-b border-white/10 pb-4 mb-8">
+                <div>
+                    <button id="items-back-btn" class="text-xs text-gray-400 hover:text-white transition-colors uppercase tracking-widest mb-2">
+                        <i class="fas fa-arrow-left mr-2"></i> Back to Projects
+                    </button>
+                    <h2 class="text-3xl font-display font-bold uppercase tracking-tighter">
+                        Items for: <span id="items-project-title" class="text-yellow-500"></span>
+                    </h2>
+                </div>
+                <span id="items-count" class="text-xs text-gray-500 uppercase tracking-widest"></span>
+            </div>
+
+            <div class="grid lg:grid-cols-3 gap-12">
+                <!-- Add Item Form -->
+                <div class="lg:col-span-1">
+                    <div class="card-dark p-6 rounded-2xl border border-white/10 bg-industrial-charcoal/50 sticky top-24">
+                        <h3 class="text-lg font-bold mb-6 uppercase tracking-widest border-b border-white/10 pb-4">Add Item</h3>
+                        <form id="add-item-form" class="space-y-4">
+                            <div>
+                                <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-2">Item Name</label>
+                                <input type="text" id="item-name" class="input-dark w-full text-white px-4 py-3 bg-black/50 border border-white/10 rounded-lg text-sm" placeholder="e.g. MS Gate Panel" required>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-2">Description</label>
+                                <input type="text" id="item-desc" class="input-dark w-full text-white px-4 py-3 bg-black/50 border border-white/10 rounded-lg text-sm" placeholder="Optional details">
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-2">Quantity</label>
+                                    <input type="number" id="item-qty" min="1" value="1" class="input-dark w-full text-white px-4 py-3 bg-black/50 border border-white/10 rounded-lg text-sm">
+                                </div>
+                                <div>
+                                    <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-2">Unit</label>
+                                    <select id="item-unit" class="input-dark w-full text-white px-4 py-3 bg-black/50 border border-white/10 rounded-lg text-sm">
+                                        <option value="pcs">pcs</option>
+                                        <option value="kg">kg</option>
+                                        <option value="meters">meters</option>
+                                        <option value="sqft">sqft</option>
+                                        <option value="set">set</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-2">Rate (₹ per unit)</label>
+                                <input type="number" id="item-rate" min="0" step="0.01" value="0" class="input-dark w-full text-white px-4 py-3 bg-black/50 border border-white/10 rounded-lg text-sm">
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-2">Status</label>
+                                <select id="item-status" class="input-dark w-full text-white px-4 py-3 bg-black/50 border border-white/10 rounded-lg text-sm">
+                                    <option value="pending">Pending</option>
+                                    <option value="in_progress">In Progress</option>
+                                    <option value="completed">Completed</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="w-full bg-yellow-600 hover:bg-yellow-700 text-black font-bold tracking-widest uppercase text-xs py-3 rounded-lg transition-colors mt-4">
+                                <i class="fas fa-plus mr-2"></i> Add Item
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Items List -->
+                <div class="lg:col-span-2">
+                    <div id="items-list" class="space-y-3">
+                        <!-- Items injected here -->
+                    </div>
+                    <!-- Totals Row -->
+                    <div id="items-total" class="mt-6 p-4 rounded-xl border border-yellow-500/20 bg-yellow-500/5 flex justify-between items-center">
+                        <span class="text-xs font-bold uppercase tracking-widest text-gray-400">Total Amount</span>
+                        <span id="items-total-amount" class="text-2xl font-bold text-yellow-500">₹0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Scripts -->
     <script type="module">
-        import { getProjects, addProject, removeProject } from './projectsData.js';
+        import { getProjects, addProject, removeProject, getProjectItems, addProjectItem, removeProjectItem } from './projectsData.js';
 
-        // Login Logic
+        // ── Login Logic ──────────────────────────────────
         const loginSection = document.getElementById('login-section');
         const dashboardSection = document.getElementById('dashboard-section');
         const loginForm = document.getElementById('admin-login-form');
         const logoutBtn = document.getElementById('logout-btn');
         const errorMsg = document.getElementById('login-error');
 
-        // Check if already authenticated via sessionStorage
         if (sessionStorage.getItem('khan_admin_auth') === 'true') {
             showDashboard();
         }
@@ -131,9 +231,29 @@
             dashboardSection.classList.remove('hidden');
             logoutBtn.classList.remove('hidden');
             renderAdminProjects();
+            checkDbConnection();
         }
 
-        // Dashboard Logic
+        // ── DB Health Check ──────────────────────────────
+        async function checkDbConnection() {
+            const dot = document.getElementById('db-dot');
+            const label = document.getElementById('db-label');
+            const badge = document.getElementById('db-status');
+            try {
+                const res = await fetch('/api/projects');
+                if (res.ok) {
+                    dot.className = 'w-2 h-2 rounded-full bg-green-500';
+                    label.textContent = 'Supabase Connected';
+                    badge.className = 'inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full border border-green-500/30 text-green-400';
+                } else { throw new Error(); }
+            } catch {
+                dot.className = 'w-2 h-2 rounded-full bg-red-500';
+                label.textContent = 'Supabase Offline — Using Defaults';
+                badge.className = 'inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full border border-red-500/30 text-red-400';
+            }
+        }
+
+        // ── Projects Dashboard ───────────────────────────
         const projectsList = document.getElementById('admin-projects-list');
         const addProjectForm = document.getElementById('add-project-form');
 
@@ -143,6 +263,7 @@
             
             if (!projects || projects.length === 0) {
                 projectsList.innerHTML = '<p class="text-gray-500 italic">No projects found. Add one on the left.</p>';
+                return;
             }
 
             projects.forEach(p => {
@@ -158,6 +279,9 @@
                         <p class="text-sm text-gray-400 line-clamp-2">${p.description}</p>
                     </div>
                     <div class="shrink-0 flex gap-2">
+                        <button class="manage-items-btn manage-btn px-4 py-2 rounded-lg transition-colors font-bold tracking-widest uppercase text-xs" data-id="${p.id}" data-title="${p.title}">
+                            <i class="fas fa-boxes-stacked mr-2"></i> Items
+                        </button>
                         <button class="remove-btn bg-red-900/50 hover:bg-red-600 text-red-200 hover:text-white px-4 py-2 rounded-lg transition-colors font-bold tracking-widest uppercase text-xs border border-red-500/30" data-id="${p.id}">
                             <i class="fas fa-trash-alt mr-2"></i> Remove
                         </button>
@@ -176,13 +300,21 @@
                     }
                 });
             });
+
+            // Bind Manage Items Buttons
+            document.querySelectorAll('.manage-items-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const id = e.currentTarget.getAttribute('data-id');
+                    const title = e.currentTarget.getAttribute('data-title');
+                    openItemsPanel(id, title);
+                });
+            });
         }
 
         // Add Project
         addProjectForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const newProject = {
-                id: 'p' + Date.now(),
                 title: document.getElementById('p-title').value,
                 meta: document.getElementById('p-meta').value,
                 image: document.getElementById('p-image').value,
@@ -192,8 +324,107 @@
             await addProject(newProject);
             await renderAdminProjects();
             addProjectForm.reset();
-            // Put default image URL back for ease of testing
             document.getElementById('p-image').value = "https://images.unsplash.com/photo-1549643276-fbc2d8ce1191?auto=format&fit=crop&q=80&w=800";
+        });
+
+        // ── Items Panel ──────────────────────────────────
+        let currentProjectId = null;
+        const itemsPanel = document.getElementById('items-panel');
+        const itemsList = document.getElementById('items-list');
+        const addItemForm = document.getElementById('add-item-form');
+        const itemsBackBtn = document.getElementById('items-back-btn');
+
+        function openItemsPanel(projectId, projectTitle) {
+            currentProjectId = projectId;
+            document.getElementById('items-project-title').textContent = projectTitle;
+            itemsPanel.classList.add('active');
+            itemsPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            renderItems();
+        }
+
+        itemsBackBtn.addEventListener('click', () => {
+            itemsPanel.classList.remove('active');
+            currentProjectId = null;
+        });
+
+        async function renderItems() {
+            if (!currentProjectId) return;
+            const items = await getProjectItems(currentProjectId);
+            document.getElementById('items-count').textContent = `${items.length} item${items.length !== 1 ? 's' : ''}`;
+
+            if (!items.length) {
+                itemsList.innerHTML = '<p class="text-gray-500 italic text-sm">No items yet. Add one from the form.</p>';
+                document.getElementById('items-total-amount').textContent = '₹0';
+                return;
+            }
+
+            let totalAmount = 0;
+            itemsList.innerHTML = items.map((item, i) => {
+                const amt = (item.quantity || 0) * (item.rate || 0);
+                totalAmount += amt;
+                return `
+                <div class="item-row flex flex-col md:flex-row items-start md:items-center gap-4 p-4 rounded-xl border border-white/5 bg-white/[.02]">
+                    <div class="flex-grow">
+                        <div class="flex items-center gap-3 mb-1">
+                            <span class="text-xs text-gray-600 font-mono">#${i+1}</span>
+                            <h4 class="font-bold text-sm uppercase">${item.name}</h4>
+                            <span class="status-badge status-${item.status}">${item.status.replace('_',' ')}</span>
+                        </div>
+                        ${item.description ? `<p class="text-xs text-gray-500 mt-1">${item.description}</p>` : ''}
+                    </div>
+                    <div class="flex items-center gap-6 text-sm shrink-0">
+                        <div class="text-center">
+                            <div class="text-[9px] text-gray-600 uppercase tracking-widest">Qty</div>
+                            <div class="font-bold">${item.quantity} ${item.unit}</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-[9px] text-gray-600 uppercase tracking-widest">Rate</div>
+                            <div class="font-bold">₹${Number(item.rate).toLocaleString('en-IN')}</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-[9px] text-gray-600 uppercase tracking-widest">Amount</div>
+                            <div class="font-bold text-yellow-500">₹${amt.toLocaleString('en-IN')}</div>
+                        </div>
+                        <button class="remove-item-btn text-red-400 hover:text-red-300 transition-colors p-2 rounded-lg hover:bg-red-900/30" data-item-id="${item.id}" title="Remove item">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>`;
+            }).join('');
+
+            document.getElementById('items-total-amount').textContent = `₹${totalAmount.toLocaleString('en-IN')}`;
+
+            // Bind remove buttons
+            document.querySelectorAll('.remove-item-btn').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    const itemId = e.currentTarget.getAttribute('data-item-id');
+                    if (confirm('Remove this item?')) {
+                        await removeProjectItem(currentProjectId, itemId);
+                        await renderItems();
+                    }
+                });
+            });
+        }
+
+        // Add Item
+        addItemForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!currentProjectId) return alert('Select a project first.');
+
+            const item = {
+                name: document.getElementById('item-name').value,
+                description: document.getElementById('item-desc').value || null,
+                quantity: parseInt(document.getElementById('item-qty').value) || 1,
+                unit: document.getElementById('item-unit').value,
+                rate: parseFloat(document.getElementById('item-rate').value) || 0,
+                status: document.getElementById('item-status').value
+            };
+
+            await addProjectItem(currentProjectId, item);
+            await renderItems();
+            addItemForm.reset();
+            document.getElementById('item-qty').value = 1;
+            document.getElementById('item-rate').value = 0;
         });
     </script>
 </body>

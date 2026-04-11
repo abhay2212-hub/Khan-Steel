@@ -33,6 +33,7 @@ export const defaultProjects = [
     }
 ];
 
+// ── Fetch projects from Supabase via API ─────────────────────
 export async function getProjects() {
     try {
         const res = await fetch('/api/projects');
@@ -41,7 +42,7 @@ export async function getProjects() {
             if (data && data.length > 0) return data;
         }
     } catch (e) {
-        console.error("Failed to fetch projects", e);
+        console.error("Failed to fetch projects from Supabase", e);
     }
     return defaultProjects;
 }
@@ -66,6 +67,56 @@ export async function removeProject(id) {
             method: 'DELETE'
         });
         if (!res.ok) throw new Error("Failed to remove project");
+    } catch(e) {
+        console.error(e);
+    }
+}
+
+// ── Project Items CRUD ───────────────────────────────────────
+export async function getProjectItems(projectId) {
+    try {
+        const res = await fetch(`/api/projects/${projectId}/items`);
+        if (res.ok) return await res.json();
+    } catch (e) {
+        console.error("Failed to fetch project items", e);
+    }
+    return [];
+}
+
+export async function addProjectItem(projectId, item) {
+    try {
+        const res = await fetch(`/api/projects/${projectId}/items`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(item)
+        });
+        if (!res.ok) throw new Error("Failed to add item");
+        return await res.json();
+    } catch(e) {
+        console.error(e);
+    }
+}
+
+export async function updateProjectItem(projectId, itemId, updates) {
+    try {
+        const res = await fetch(`/api/projects/${projectId}/items/${itemId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(updates)
+        });
+        if (!res.ok) throw new Error("Failed to update item");
+        return await res.json();
+    } catch(e) {
+        console.error(e);
+    }
+}
+
+export async function removeProjectItem(projectId, itemId) {
+    try {
+        const res = await fetch(`/api/projects/${projectId}/items/${itemId}`, {
+            method: 'DELETE'
+        });
+        if (!res.ok) throw new Error("Failed to remove item");
     } catch(e) {
         console.error(e);
     }
