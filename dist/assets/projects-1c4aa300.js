@@ -1,4 +1,4 @@
-import"./style-c3994442.js";import"./main-694aeeb6.js";import{g as o}from"./projectsData-5e4ae3fb.js";const s=async()=>{const e=document.getElementById("projects-grid");if(!e)return;const a=await o();e.innerHTML=a.map((t,r)=>`
+import"./style-2cdeaa5f.js";import"./main-f00e5d71.js";import{g as o}from"./projectsData-5e4ae3fb.js";const s=async()=>{const e=document.getElementById("projects-grid");if(!e)return;const a=await o();e.innerHTML=a.map((t,r)=>`
                 <div class="group spotlight-card overflow-hidden rounded-2xl border border-white border-opacity-5" data-glow data-aos="fade-up" data-aos-delay="${r%4*100}">
                     <div class="aspect-video relative overflow-hidden">
                         <img src="${t.image}" alt="${t.title}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
