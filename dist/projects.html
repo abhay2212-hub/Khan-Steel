@@ -45,11 +45,11 @@
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
     <meta http-equiv="X-XSS-Protection" content="1; mode=block">
-  <script type="module" crossorigin src="/assets/projects-1c4aa300.js"></script>
-  <link rel="modulepreload" crossorigin href="/assets/style-2cdeaa5f.js">
-  <link rel="modulepreload" crossorigin href="/assets/main-f00e5d71.js">
-  <link rel="modulepreload" crossorigin href="/assets/projectsData-5e4ae3fb.js">
-  <link rel="stylesheet" href="/assets/style-c5e13af1.css">
+  <script type="module" crossorigin src="/assets/projects-2db925ca.js"></script>
+  <link rel="modulepreload" crossorigin href="/assets/style-bd45dd7d.js">
+  <link rel="modulepreload" crossorigin href="/assets/main-095d3270.js">
+  <link rel="modulepreload" crossorigin href="/assets/projectsData-b8c9ba37.js">
+  <link rel="stylesheet" href="/assets/style-557a6e47.css">
 </head>
 <body class="overflow-x-hidden bg-industrial-black">
     <!-- Spiral Loader -->
@@ -88,12 +88,19 @@
         <a href="index.html" class="text-2xl md:text-3xl font-display font-bold tracking-tighter flex items-center gap-2 text-white">
             Khan Steel
         </a>
-        <div class="hidden md:flex gap-8">
+        <div class="hidden md:flex gap-8 items-center">
             <a href="index.html" class="nav-link font-semibold uppercase text-xs tracking-widest">Home</a>
             <a href="about.html" class="nav-link font-semibold uppercase text-xs tracking-widest">About</a>
-            <a href="projects.html" class="nav-link text-white font-semibold uppercase text-xs tracking-widest after:w-full">Projects</a>
+            <div class="dropdown-container">
+                <a href="#" class="nav-link text-white font-semibold uppercase text-xs tracking-widest after:w-full flex items-center gap-1" id="projects-dropdown-btn">
+                    Projects <i class="fas fa-chevron-down text-[9px] opacity-60"></i>
+                </a>
+                <div class="dropdown-menu" id="projects-dropdown-menu">
+                    <a href="projects.html?type=photos" class="dropdown-item">Photos</a>
+                    <a href="projects.html?type=videos" class="dropdown-item">Videos</a>
+                </div>
+            </div>
             <a href="contact.html" class="nav-link font-semibold uppercase text-xs tracking-widest">Contact</a>
-
         </div>
         <div class="flex items-center gap-4">
              <a href="tel:08936993790" class="hidden md:block text-xs font-bold text-white tracking-[0.2em] uppercase opacity-60 hover:opacity-100 transition-opacity">
@@ -118,6 +125,13 @@
     <!-- Featured Projects Grid -->
     <section class="py-24 px-6 md:px-12 bg-industrial-black">
         <div class="max-w-7xl mx-auto">
+            <!-- Filter Tabs -->
+            <div class="flex justify-center gap-4 mb-16 flex-wrap" data-aos="fade-up">
+                <button id="btn-all" class="px-6 py-3 rounded-full text-xs font-bold uppercase tracking-widest border transition-all duration-300 bg-white text-black border-white">All Projects</button>
+                <button id="btn-photos" class="px-6 py-3 rounded-full text-xs font-bold uppercase tracking-widest border border-white/10 hover:border-white text-white transition-all duration-300 bg-transparent">Photos Only</button>
+                <button id="btn-videos" class="px-6 py-3 rounded-full text-xs font-bold uppercase tracking-widest border border-white/10 hover:border-white text-white transition-all duration-300 bg-transparent">Videos Only</button>
+            </div>
+
             <div id="projects-grid" class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
                 <!-- Projects injected by JS -->
             </div>
@@ -181,6 +195,20 @@
     <script>
         AOS.init({ duration: 800, once: true });
     </script>
+    <!-- Lightbox Modal -->
+    <div id="lightbox" class="lightbox-modal" role="dialog" aria-modal="true" aria-label="Project details view">
+        <button class="lightbox-close" id="lightbox-close" aria-label="Close details view"><i class="fas fa-times"></i></button>
+        <button class="lightbox-nav lightbox-prev" id="lightbox-prev" aria-label="Previous project"><i class="fas fa-chevron-left"></i></button>
+        <button class="lightbox-nav lightbox-next" id="lightbox-next" aria-label="Next project"><i class="fas fa-chevron-right"></i></button>
+        <div class="lightbox-content-wrapper">
+            <div id="lightbox-media-container"></div>
+            <div class="lightbox-caption">
+                <h3 id="lightbox-title"></h3>
+                <p id="lightbox-meta"></p>
+            </div>
+        </div>
+    </div>
+
     
 </body>
 </html>
