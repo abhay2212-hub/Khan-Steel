@@ -203,12 +203,19 @@
             </a>
         </div>
         
-        <div class="hidden md:flex gap-8">
+        <div class="hidden md:flex gap-8 items-center">
             <a href="index.html" class="nav-link text-white font-semibold uppercase text-xs tracking-widest after:w-full">Home</a>
             <a href="about.html" class="nav-link font-semibold uppercase text-xs tracking-widest">About</a>
-            <a href="projects.html" class="nav-link font-semibold uppercase text-xs tracking-widest">Projects</a>
+            <div class="dropdown-container">
+                <a href="#" class="nav-link font-semibold uppercase text-xs tracking-widest flex items-center gap-1" id="projects-dropdown-btn">
+                    Projects <i class="fas fa-chevron-down text-[9px] opacity-60"></i>
+                </a>
+                <div class="dropdown-menu" id="projects-dropdown-menu">
+                    <a href="projects.html?type=photos" class="dropdown-item">Photos</a>
+                    <a href="projects.html?type=videos" class="dropdown-item">Videos</a>
+                </div>
+            </div>
             <a href="contact.html" class="nav-link font-semibold uppercase text-xs tracking-widest">Contact</a>
-
         </div>
 
         <div class="flex items-center gap-3 md:gap-6">
@@ -234,10 +241,16 @@
                 </button>
             </div>
             <div class="flex flex-col gap-8">
-                <a href="#home" class="text-4xl font-display font-bold text-white hover:text-industrial-yellow transition-colors">HOME</a>
+                <a href="index.html" class="text-4xl font-display font-bold text-white hover:text-industrial-yellow transition-colors">HOME</a>
                 <a href="about.html" class="text-4xl font-display font-bold text-white hover:opacity-50 transition-colors uppercase">ABOUT</a>
                 <a href="services.html" class="text-4xl font-display font-bold text-white hover:opacity-50 transition-colors uppercase">SERVICES</a>
-                <a href="#projects" class="text-4xl font-display font-bold text-white hover:opacity-50 transition-colors uppercase">PROJECTS</a>
+                <div class="flex flex-col gap-2">
+                    <a href="projects.html" class="text-4xl font-display font-bold text-white hover:opacity-50 transition-colors uppercase">PROJECTS</a>
+                    <div class="pl-6 flex flex-col gap-2">
+                        <a href="projects.html?type=photos" class="text-2xl font-display font-bold text-gray-400 hover:text-white transition-colors uppercase">Photos</a>
+                        <a href="projects.html?type=videos" class="text-2xl font-display font-bold text-gray-400 hover:text-white transition-colors uppercase">Videos</a>
+                    </div>
+                </div>
                 <a href="contact.html" class="text-4xl font-display font-bold text-white hover:opacity-50 transition-colors uppercase">CONTACT</a>
             </div>
             <div class="mt-auto border-t border-white border-opacity-10 pt-12">

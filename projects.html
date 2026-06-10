@@ -83,12 +83,19 @@
         <a href="index.html" class="text-2xl md:text-3xl font-display font-bold tracking-tighter flex items-center gap-2 text-white">
             Khan Steel
         </a>
-        <div class="hidden md:flex gap-8">
+        <div class="hidden md:flex gap-8 items-center">
             <a href="index.html" class="nav-link font-semibold uppercase text-xs tracking-widest">Home</a>
             <a href="about.html" class="nav-link font-semibold uppercase text-xs tracking-widest">About</a>
-            <a href="projects.html" class="nav-link text-white font-semibold uppercase text-xs tracking-widest after:w-full">Projects</a>
+            <div class="dropdown-container">
+                <a href="#" class="nav-link text-white font-semibold uppercase text-xs tracking-widest after:w-full flex items-center gap-1" id="projects-dropdown-btn">
+                    Projects <i class="fas fa-chevron-down text-[9px] opacity-60"></i>
+                </a>
+                <div class="dropdown-menu" id="projects-dropdown-menu">
+                    <a href="projects.html?type=photos" class="dropdown-item">Photos</a>
+                    <a href="projects.html?type=videos" class="dropdown-item">Videos</a>
+                </div>
+            </div>
             <a href="contact.html" class="nav-link font-semibold uppercase text-xs tracking-widest">Contact</a>
-
         </div>
         <div class="flex items-center gap-4">
              <a href="tel:08936993790" class="hidden md:block text-xs font-bold text-white tracking-[0.2em] uppercase opacity-60 hover:opacity-100 transition-opacity">
@@ -113,6 +120,13 @@
     <!-- Featured Projects Grid -->
     <section class="py-24 px-6 md:px-12 bg-industrial-black">
         <div class="max-w-7xl mx-auto">
+            <!-- Filter Tabs -->
+            <div class="flex justify-center gap-4 mb-16 flex-wrap" data-aos="fade-up">
+                <button id="btn-all" class="px-6 py-3 rounded-full text-xs font-bold uppercase tracking-widest border transition-all duration-300 bg-white text-black border-white">All Projects</button>
+                <button id="btn-photos" class="px-6 py-3 rounded-full text-xs font-bold uppercase tracking-widest border border-white/10 hover:border-white text-white transition-all duration-300 bg-transparent">Photos Only</button>
+                <button id="btn-videos" class="px-6 py-3 rounded-full text-xs font-bold uppercase tracking-widest border border-white/10 hover:border-white text-white transition-all duration-300 bg-transparent">Videos Only</button>
+            </div>
+
             <div id="projects-grid" class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
                 <!-- Projects injected by JS -->
             </div>
@@ -176,34 +190,261 @@
     <script>
         AOS.init({ duration: 800, once: true });
     </script>
+    <!-- Lightbox Modal -->
+    <div id="lightbox" class="lightbox-modal" role="dialog" aria-modal="true" aria-label="Project details view">
+        <button class="lightbox-close" id="lightbox-close" aria-label="Close details view"><i class="fas fa-times"></i></button>
+        <button class="lightbox-nav lightbox-prev" id="lightbox-prev" aria-label="Previous project"><i class="fas fa-chevron-left"></i></button>
+        <button class="lightbox-nav lightbox-next" id="lightbox-next" aria-label="Next project"><i class="fas fa-chevron-right"></i></button>
+        <div class="lightbox-content-wrapper">
+            <div id="lightbox-media-container"></div>
+            <div class="lightbox-caption">
+                <h3 id="lightbox-title"></h3>
+                <p id="lightbox-meta"></p>
+            </div>
+        </div>
+    </div>
+
     <script type="module">
         import { getProjects } from './projectsData.js';
-        const renderProjects = async () => {
+        
+        let allProjects = [];
+        let activeFilteredProjects = [];
+        let currentFilter = 'all';
+        let currentLightboxIdx = -1;
+
+        const updateTabUI = (filter) => {
+            const btnAll = document.getElementById('btn-all');
+            const btnPhotos = document.getElementById('btn-photos');
+            const btnVideos = document.getElementById('btn-videos');
+            
+            // Reset styles
+            [btnAll, btnPhotos, btnVideos].forEach(btn => {
+                if (btn) {
+                    btn.className = "px-6 py-3 rounded-full text-xs font-bold uppercase tracking-widest border border-white/10 hover:border-white text-white transition-all duration-300 bg-transparent";
+                }
+            });
+            
+            // Set active style
+            const activeBtn = filter === 'photos' ? btnPhotos : (filter === 'videos' ? btnVideos : btnAll);
+            if (activeBtn) {
+                activeBtn.className = "px-6 py-3 rounded-full text-xs font-bold uppercase tracking-widest border transition-all duration-300 bg-white text-black border-white";
+            }
+        };
+
+        const setupLazyVideos = (grid) => {
+            if (!('IntersectionObserver' in window)) {
+                // Fallback for older browsers
+                grid.querySelectorAll('video[data-src]').forEach(video => {
+                    video.src = video.dataset.src;
+                });
+                return;
+            }
+
+            const videoObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    const video = entry.target;
+                    if (entry.isIntersecting) {
+                        if (!video.src && video.dataset.src) {
+                            video.src = video.dataset.src;
+                            video.load();
+                        }
+                        video.play().catch(err => console.log('Autoplay deferred:', err));
+                    } else {
+                        if (video.src) {
+                            video.pause();
+                        }
+                    }
+                });
+            }, {
+                root: null,
+                rootMargin: '120px', // start loading early before it scrolls into view
+                threshold: 0.1
+            });
+
+            grid.querySelectorAll('video[data-src]').forEach(video => {
+                videoObserver.observe(video);
+            });
+        };
+
+        const openLightbox = (idx) => {
+            if (idx < 0 || idx >= activeFilteredProjects.length) return;
+            currentLightboxIdx = idx;
+            const project = activeFilteredProjects[idx];
+            const modal = document.getElementById('lightbox');
+            const mediaContainer = document.getElementById('lightbox-media-container');
+            const titleEl = document.getElementById('lightbox-title');
+            const metaEl = document.getElementById('lightbox-meta');
+            
+            if (!modal || !mediaContainer || !titleEl || !metaEl) return;
+            
+            titleEl.textContent = project.title;
+            metaEl.textContent = project.meta;
+            
+            const isVideo = project.type === 'video';
+            if (isVideo) {
+                mediaContainer.innerHTML = `<video src="${project.video}" class="lightbox-media" controls autoplay playsinline></video>`;
+            } else {
+                mediaContainer.innerHTML = `<img src="${project.image}" class="lightbox-media" alt="${project.title}">`;
+            }
+            
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden'; // prevent page scroll
+        };
+
+        const closeLightbox = () => {
+            const modal = document.getElementById('lightbox');
+            const mediaContainer = document.getElementById('lightbox-media-container');
+            if (modal) modal.classList.remove('show');
+            if (mediaContainer) {
+                // Stop video playing by clearing innerHTML
+                mediaContainer.innerHTML = '';
+            }
+            document.body.style.overflow = ''; // restore page scroll
+            currentLightboxIdx = -1;
+        };
+
+        const renderProjects = () => {
             const grid = document.getElementById('projects-grid');
-            if(!grid) return;
-            const projects = await getProjects();
-            grid.innerHTML = projects.map((p, i) => `
-                <div class="group spotlight-card overflow-hidden rounded-2xl border border-white border-opacity-5" data-glow data-aos="fade-up" data-aos-delay="${(i % 4) * 100}">
-                    <div class="aspect-video relative overflow-hidden">
-                        <img src="${p.image}" alt="${p.title}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                    </div>
-                    <div class="p-5">
-                        <h3 class="text-xl font-bold mb-2 uppercase">${p.title}</h3>
-                        <p class="text-xs text-gray-500 uppercase tracking-widest mb-4">${p.meta}</p>
-                        <p class="text-gray-400 text-sm mb-6">${p.description}</p>
-                        <a href="contact.html" class="text-white text-xs font-bold tracking-widest flex items-center gap-2">INQUIRE <i class="fas fa-arrow-right"></i></a>
-                    </div>
-                </div>
-            `).join('');
+            if (!grid) return;
+            
+            // Toggle grid columns dynamically
+            if (currentFilter === 'videos') {
+                grid.className = "grid md:grid-cols-2 lg:grid-cols-2 gap-8";
+            } else {
+                grid.className = "grid md:grid-cols-2 lg:grid-cols-4 gap-8";
+            }
+
+            // Filter list
+            const filtered = allProjects.filter(p => {
+                const type = p.type || 'photo';
+                if (currentFilter === 'photos') return type === 'photo';
+                if (currentFilter === 'videos') return type === 'video';
+                return true;
+            });
+            
+            activeFilteredProjects = filtered;
+            
+            grid.innerHTML = filtered.map((p, i) => {
+                const isVideo = p.type === 'video';
+                if (isVideo) {
+                    return `
+                        <div class="group spotlight-card overflow-hidden rounded-2xl border border-white border-opacity-5 cursor-pointer p-0 h-[450px]" data-index="${i}" data-glow data-aos="fade-up" data-aos-delay="${(i % 2) * 100}">
+                            <video data-src="${p.video}" class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity duration-300" loop muted playsinline preload="metadata"></video>
+                        </div>
+                    `;
+                } else {
+                    return `
+                        <div class="group spotlight-card overflow-hidden rounded-2xl border border-white border-opacity-5 cursor-pointer" data-index="${i}" data-glow data-aos="fade-up" data-aos-delay="${(i % 4) * 100}">
+                            <div class="aspect-video relative overflow-hidden">
+                                <img src="${p.image}" alt="${p.title}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                            </div>
+                            <div class="p-5">
+                                <h3 class="text-xl font-bold mb-2 uppercase">${p.title}</h3>
+                                <p class="text-xs text-gray-500 uppercase tracking-widest mb-4">${p.meta}</p>
+                                <p class="text-gray-400 text-sm mb-6">${p.description}</p>
+                                <a href="contact.html" class="text-white text-xs font-bold tracking-widest flex items-center gap-2">INQUIRE <i class="fas fa-arrow-right"></i></a>
+                            </div>
+                        </div>
+                    `;
+                }
+            }).join('');
+
+            // Add click listeners to cards for Lightbox
+            const cards = grid.querySelectorAll('.spotlight-card');
+            cards.forEach(card => {
+                card.addEventListener('click', (e) => {
+                    // Avoid triggering lightbox if clicking "INQUIRE" link
+                    if (e.target.closest('a')) return;
+                    const idx = parseInt(card.getAttribute('data-index'));
+                    openLightbox(idx);
+                });
+            });
+
+            setupLazyVideos(grid);
             
             // Re-trigger AOS for new elements immediately
             setTimeout(() => {
-                AOS.refresh();
+                if (typeof AOS !== 'undefined') {
+                    AOS.refresh();
+                }
             }, 100);
         };
-        
-        document.addEventListener('DOMContentLoaded', renderProjects);
+
+        const init = async () => {
+            // Load projects data
+            allProjects = await getProjects();
+            
+            // Parse url parameter
+            const urlParams = new URLSearchParams(window.location.search);
+            const typeParam = urlParams.get('type');
+            if (typeParam === 'photos') {
+                currentFilter = 'photos';
+            } else if (typeParam === 'videos') {
+                currentFilter = 'videos';
+            } else {
+                currentFilter = 'all';
+            }
+            
+            updateTabUI(currentFilter);
+            renderProjects();
+            
+            // Bind tab click events
+            document.getElementById('btn-all').addEventListener('click', () => {
+                currentFilter = 'all';
+                window.history.replaceState(null, '', 'projects.html');
+                updateTabUI('all');
+                renderProjects();
+            });
+            document.getElementById('btn-photos').addEventListener('click', () => {
+                currentFilter = 'photos';
+                window.history.replaceState(null, '', 'projects.html?type=photos');
+                updateTabUI('photos');
+                renderProjects();
+            });
+            document.getElementById('btn-videos').addEventListener('click', () => {
+                currentFilter = 'videos';
+                window.history.replaceState(null, '', 'projects.html?type=videos');
+                updateTabUI('videos');
+                renderProjects();
+            });
+
+            // Lightbox Controls Binding
+            document.getElementById('lightbox-close').addEventListener('click', closeLightbox);
+            document.getElementById('lightbox-prev').addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (currentLightboxIdx > 0) {
+                    openLightbox(currentLightboxIdx - 1);
+                } else {
+                    openLightbox(activeFilteredProjects.length - 1); // loop back
+                }
+            });
+            document.getElementById('lightbox-next').addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (currentLightboxIdx < activeFilteredProjects.length - 1) {
+                    openLightbox(currentLightboxIdx + 1);
+                } else {
+                    openLightbox(0); // loop back
+                }
+            });
+            // Close on click background
+            document.getElementById('lightbox').addEventListener('click', (e) => {
+                if (e.target === document.getElementById('lightbox')) {
+                    closeLightbox();
+                }
+            });
+            // Keyboard support
+            document.addEventListener('keydown', (e) => {
+                const modal = document.getElementById('lightbox');
+                if (modal && modal.classList.contains('show')) {
+                    if (e.key === 'Escape') closeLightbox();
+                    if (e.key === 'ArrowLeft') document.getElementById('lightbox-prev').click();
+                    if (e.key === 'ArrowRight') document.getElementById('lightbox-next').click();
+                }
+            });
+        };
+
+        document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
 </html>

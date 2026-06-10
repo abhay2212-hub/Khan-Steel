@@ -458,6 +458,33 @@ console.log('Khan Steel Household Platform Initialized');
 
 // Mobile Menu Global Logic
 document.addEventListener('DOMContentLoaded', () => {
+    // Projects Dropdown Click Toggle
+    const dropdownBtn = document.getElementById('projects-dropdown-btn');
+    const dropdownMenu = document.getElementById('projects-dropdown-menu');
+
+    if (dropdownBtn && dropdownMenu) {
+        dropdownBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            dropdownMenu.classList.toggle('show');
+            const chevron = dropdownBtn.querySelector('.fa-chevron-down');
+            if (chevron) {
+                chevron.classList.toggle('rotate-180');
+            }
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!dropdownBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
+                dropdownMenu.classList.remove('show');
+                const chevron = dropdownBtn.querySelector('.fa-chevron-down');
+                if (chevron) {
+                    chevron.classList.remove('rotate-180');
+                }
+            }
+        });
+    }
+
     const menuBtn = document.getElementById('mobile-menu-btn');
     const closeBtn = document.getElementById('close-menu');
     const mobileMenu = document.getElementById('mobile-menu');

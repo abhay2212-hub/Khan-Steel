@@ -102,8 +102,79 @@ export const defaultProjects = [
     { id: 'prod69', title: 'Steelwork Design', meta: 'Design Collection', description: 'Design', image: '/Products/WhatsApp Image 2026-04-14 at 14.17.18 (2).jpeg', delay: 0 },
     { id: 'prod70', title: 'Steelwork Design', meta: 'Design Collection', description: 'Design', image: '/Products/WhatsApp Image 2026-04-14 at 14.17.18.jpeg', delay: 100 },
     { id: 'prod71', title: 'Steelwork Design', meta: 'Design Collection', description: 'Design', image: '/Products/WhatsApp Image 2026-04-14 at 14.17.19.jpeg', delay: 200 },
-    { id: 'prod72', title: 'Steelwork Design', meta: 'Design Collection', description: 'Design', image: '/Products/WhatsApp Image 2026-04-14 at 14.17.20.jpeg', delay: 300 }
+    { id: 'prod72', title: 'Steelwork Design', meta: 'Design Collection', description: 'Design', image: '/Products/WhatsApp Image 2026-04-14 at 14.17.20.jpeg', delay: 300 },
 ];
+
+const videoFiles = [
+    "WhatsApp Video 2026-06-10 at 12.01.20 (1).mp4",
+    "WhatsApp Video 2026-06-10 at 12.01.20.mp4",
+    "WhatsApp Video 2026-06-10 at 12.01.29.mp4",
+    "WhatsApp Video 2026-06-10 at 12.01.39.mp4",
+    "WhatsApp Video 2026-06-10 at 12.03.01 (1).mp4",
+    "WhatsApp Video 2026-06-10 at 12.03.01 (2).mp4",
+    "WhatsApp Video 2026-06-10 at 12.03.01.mp4",
+    "WhatsApp Video 2026-06-10 at 12.03.02.mp4",
+    "WhatsApp Video 2026-06-10 at 12.27.51.mp4",
+    "WhatsApp Video 2026-06-10 at 12.27.52.mp4",
+    "WhatsApp Video 2026-06-10 at 12.29.10.mp4",
+    "WhatsApp Video 2026-06-10 at 12.29.11.mp4",
+    "WhatsApp Video 2026-06-10 at 12.29.12 (1).mp4",
+    "WhatsApp Video 2026-06-10 at 12.29.12.mp4",
+    "WhatsApp Video 2026-06-10 at 12.30.58.mp4",
+    "WhatsApp Video 2026-06-10 at 12.30.59 (1).mp4",
+    "WhatsApp Video 2026-06-10 at 12.30.59 (2).mp4",
+    "WhatsApp Video 2026-06-10 at 12.30.59.mp4",
+    "WhatsApp Video 2026-06-10 at 12.31.00 (1).mp4",
+    "WhatsApp Video 2026-06-10 at 12.31.00.mp4",
+    "WhatsApp Video 2026-06-10 at 12.33.16 (1).mp4",
+    "WhatsApp Video 2026-06-10 at 12.33.16.mp4",
+    "WhatsApp Video 2026-06-10 at 12.33.17 (1).mp4",
+    "WhatsApp Video 2026-06-10 at 12.33.17.mp4",
+    "WhatsApp Video 2026-06-10 at 12.33.18.mp4",
+    "WhatsApp Video 2026-06-10 at 12.33.19 (1).mp4",
+    "WhatsApp Video 2026-06-10 at 12.33.19 (2).mp4",
+    "WhatsApp Video 2026-06-10 at 12.33.19.mp4",
+    "WhatsApp Video 2026-06-10 at 12.33.20 (1).mp4",
+    "WhatsApp Video 2026-06-10 at 12.33.20.mp4",
+    "WhatsApp Video 2026-06-10 at 12.33.21 (1).mp4",
+    "WhatsApp Video 2026-06-10 at 12.33.21.mp4",
+    "WhatsApp Video 2026-06-10 at 12.33.22 (1).mp4",
+    "WhatsApp Video 2026-06-10 at 12.33.22 (2).mp4",
+    "WhatsApp Video 2026-06-10 at 12.33.22 (3).mp4",
+    "WhatsApp Video 2026-06-10 at 12.33.22.mp4",
+    "WhatsApp Video 2026-06-10 at 12.33.24 (1).mp4",
+    "WhatsApp Video 2026-06-10 at 12.40.21.mp4",
+    "WhatsApp Video 2026-06-10 at 12.40.41.mp4",
+    "WhatsApp Video 2026-06-10 at 12.41.29.mp4"
+];
+
+const mappedVideos = videoFiles.map((file, idx) => {
+    const idNum = idx + 1;
+    let title = 'Bespoke Steel Project ' + idNum;
+    let meta = 'Plant Fabrication • 2024';
+    let description = 'High-integrity custom residential fabrication task completed at Varanasi plant.';
+    
+    if (idNum === 1) { title = 'Precision Structural Welding'; meta = 'Plant Process • 2024'; description = 'TIG welding high-strength structural joints for a residential custom gate framework.'; }
+    else if (idNum === 2) { title = 'Luxury Gate Handover'; meta = 'Site Delivery • 2024'; description = 'Completed minimal sliding entrance gate in operation after client handover.'; }
+    else if (idNum === 3) { title = 'CNC Sheet Metal Bending'; meta = 'CNC Plant • 2024'; description = 'Hydraulic press brake bending steel plates into precise customized structural angles.'; }
+    else if (idNum === 4) { title = 'Minimalist Balcony Railings'; meta = 'Modernist Villa • 2024'; description = 'Premium stainless steel balcony railings with anti-corrosion chrome finish.'; }
+    else if (idNum === 5) { title = 'Laser Cutting Fabrication'; meta = 'Plant Demo • 2024'; description = 'Fiber optic laser cutter creating architectural lattice designs on steel panels.'; }
+    else if (idNum === 6) { title = 'Heavy Columns Production'; meta = 'Manufacturing • 2024'; description = 'Heavy duty manufacturing and alignment testing of structural steel support columns.'; }
+    else if (idNum === 7) { title = 'Floating Staircase Load Test'; meta = 'Quality Control • 2024'; description = 'Deflection and stability testing on a custom steel cantilevered staircase.'; }
+    else if (idNum === 8) { title = 'Automated Entrance Gate Test'; meta = 'Testing Plant • 2024'; description = 'Verification of structural gate alignment and mechanical safety mechanisms.'; }
+    
+    return {
+        id: 'vid' + idNum,
+        title: title,
+        meta: meta,
+        description: description,
+        video: './vid/' + file,
+        type: 'video',
+        delay: (idx % 4) * 100
+    };
+});
+
+defaultProjects.push(...mappedVideos);
 
 // ── Fetch projects from Supabase via API ─────────────────────
 export async function getProjects() {
