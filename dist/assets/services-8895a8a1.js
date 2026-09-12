@@ -1,4 +1,4 @@
-import"./style-bd45dd7d.js";import"./main-095d3270.js";import{g as o}from"./projectsData-b8c9ba37.js";async function i(){const e=document.getElementById("services-products-grid");if(e)try{const s=(await o()).filter(t=>t.meta==="Design Collection").slice(0,18);e.innerHTML=s.map((t,r)=>`
+import"./style-15f577d0.js";import"./main-18d7502f.js";import{g as o}from"./projectsData-b8c9ba37.js";async function i(){const e=document.getElementById("services-products-grid");if(e)try{const s=(await o()).filter(t=>t.meta==="Design Collection").slice(0,18);e.innerHTML=s.map((t,r)=>`
                     <div class="group relative rounded-2xl overflow-hidden glass aspect-video" data-aos="fade-up" data-aos-delay="${r*30}">
                         <img src="${t.image}" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" alt="${t.title}" loading="lazy">
                         <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-60"></div>
